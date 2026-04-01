@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>CMT Pre-Order Costing v2.0 | NFP NazeerFinPro</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d0f14;--surface:#161920;--surface2:#1e2230;--surface3:#252a3a;--border:#2a2f3e;--accent:#f5a623;--text:#eef0f6;--muted:#7a8099;--green:#2ecc71;--red:#e74c3c;--blue:#4a9eff;--purple:#9b59b6}
+:root{--bg:#0d0f14;--surface:#161920;--surface2:#1e2230;--border:#2a2f3e;--accent:#f5a623;--text:#eef0f6;--muted:#7a8099;--green:#2ecc71;--red:#e74c3c;--blue:#4a9eff;--purple:#9b59b6}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
 h1,h2,h3{font-family:'Syne',sans-serif}
 .mono{font-family:'DM Mono',monospace}
@@ -20,7 +21,7 @@ h1,h2,h3{font-family:'Syne',sans-serif}
 .logo{padding:22px 18px 18px;border-bottom:1px solid var(--border)}
 .logo-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--accent);letter-spacing:1px}
 .logo-sub{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:2px;text-transform:uppercase}
-.logo-ver{font-size:9px;color:var(--surface3);margin-top:3px;font-family:'DM Mono',monospace}
+.logo-ver{font-size:9px;color:#333;margin-top:3px;font-family:'DM Mono',monospace}
 .nav{padding:14px 10px;flex:1}
 .nav-section{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;padding:10px 10px 5px;font-weight:700}
 .nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);transition:all .15s;margin-bottom:3px;border:1px solid transparent}
@@ -42,13 +43,14 @@ h1,h2,h3{font-family:'Syne',sans-serif}
 .stat-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent)}
 .stat-label{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.8px}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;transition:all .14s;font-family:'DM Sans',sans-serif;white-space:nowrap}
-.btn-primary{background:var(--accent);color:#0d0f14}.btn-primary:hover{background:#e09b1a}
-.btn-danger{background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.25)}.btn-danger:hover{background:rgba(231,76,60,.22)}
-.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-.btn-green{background:rgba(46,204,113,.12);color:var(--green);border:1px solid rgba(46,204,113,.25)}.btn-green:hover{background:rgba(46,204,113,.22)}
-.btn-blue{background:rgba(74,158,255,.12);color:var(--blue);border:1px solid rgba(74,158,255,.25)}.btn-blue:hover{background:rgba(74,158,255,.22)}
-.btn-amber{background:rgba(245,166,35,.12);color:var(--accent);border:1px solid rgba(245,166,35,.25)}.btn-amber:hover{background:rgba(245,166,35,.22)}
-.btn-purple{background:rgba(155,89,182,.12);color:var(--purple);border:1px solid rgba(155,89,182,.25)}.btn-purple:hover{background:rgba(155,89,182,.22)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:#0d0f14}.btn-primary:hover:not(:disabled){background:#e09b1a}
+.btn-danger{background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.25)}.btn-danger:hover:not(:disabled){background:rgba(231,76,60,.22)}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border)}.btn-ghost:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.btn-green{background:rgba(46,204,113,.12);color:var(--green);border:1px solid rgba(46,204,113,.25)}.btn-green:hover:not(:disabled){background:rgba(46,204,113,.22)}
+.btn-blue{background:rgba(74,158,255,.12);color:var(--blue);border:1px solid rgba(74,158,255,.25)}.btn-blue:hover:not(:disabled){background:rgba(74,158,255,.22)}
+.btn-amber{background:rgba(245,166,35,.12);color:var(--accent);border:1px solid rgba(245,166,35,.25)}.btn-amber:hover:not(:disabled){background:rgba(245,166,35,.22)}
+.btn-purple{background:rgba(155,89,182,.12);color:var(--purple);border:1px solid rgba(155,89,182,.25)}.btn-purple:hover:not(:disabled){background:rgba(155,89,182,.22)}
 .btn-sm{padding:5px 11px;font-size:12px;border-radius:6px}
 .btn-xs{padding:3px 9px;font-size:11px;border-radius:5px}
 .ag{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
@@ -72,7 +74,7 @@ textarea{resize:vertical;min-height:60px}
 @media(max-width:700px){.fr2,.fr3,.fr4{grid-template-columns:1fr}}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;width:540px;max-width:95vw;max-height:90vh;overflow-y:auto}
-.modal-lg{width:720px}
+.modal-lg{width:740px}
 .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .modal-title{font-size:17px;font-weight:800}
 .modal-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:2px 6px;border-radius:4px}.modal-close:hover{color:var(--text)}
@@ -83,7 +85,8 @@ textarea{resize:vertical;min-height:60px}
 .toggle input:checked+.toggle-track{background:var(--green)}
 .toggle-thumb{position:absolute;height:15px;width:15px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;pointer-events:none}
 .toggle input:checked~.toggle-thumb{transform:translateX(17px)}
-.toast{position:fixed;bottom:22px;right:22px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:12px 18px;font-size:13px;z-index:9999;box-shadow:0 8px 28px rgba(0,0,0,.5);animation:slideIn .22s ease}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:12px 18px;font-size:13px;z-index:9999;box-shadow:0 8px 28px rgba(0,0,0,.5);animation:slideIn .22s ease;max-width:320px}
+.toast-err{border-color:rgba(231,76,60,.4);color:var(--red)}
 @keyframes slideIn{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
 .empty-state{text-align:center;padding:50px 20px;color:var(--muted)}
 .empty-icon{font-size:40px;margin-bottom:10px}
@@ -99,7 +102,12 @@ textarea{resize:vertical;min-height:60px}
 .grp-table{border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;overflow:hidden;margin-bottom:18px}
 .rate-inp{width:115px;text-align:right;padding:5px 8px;font-size:12.5px}
 .qty-inp{width:85px;text-align:right;padding:5px 8px;font-size:12.5px}
-.snote{background:rgba(74,158,255,.06);border:1px solid rgba(74,158,255,.15);border-radius:7px;padding:9px 14px;font-size:11.5px;color:var(--blue);margin-bottom:18px}
+.db-note{background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.15);border-radius:7px;padding:9px 14px;font-size:11.5px;color:var(--green);margin-bottom:18px}
+/* Loading overlay */
+.loading-bar{position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--blue));z-index:9999;animation:loadpulse 1.2s ease-in-out infinite}
+@keyframes loadpulse{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(245,166,35,.3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:600px){
   .shell{flex-direction:column}.sidebar{width:100%;height:auto;position:static}
   .nav{display:flex;flex-wrap:wrap;padding:8px;gap:3px}.nav-section{display:none}
@@ -110,58 +118,307 @@ textarea{resize:vertical;min-height:60px}
 </head>
 <body>
 <div class="shell" id="app"></div>
+
 <script>
-// ═══════════════════════ DEFAULT DATA ═══════════════════════
-const DEF_GROUPS=[
-  {name:'Cutting',ops:[{name:'Fabric Cutting',unit:'Pcs',approvedRate:0,remarks:''}]},
-  {name:'Stitching',ops:[{name:'Body Stitching',unit:'Pcs',approvedRate:0,remarks:''},{name:'Sleeve Attachment',unit:'Pcs',approvedRate:0,remarks:''}]},
-  {name:'Finishing',ops:[{name:'Trimming',unit:'Pcs',approvedRate:0,remarks:''},{name:'Iron & Press',unit:'Pcs',approvedRate:0,remarks:''}]},
-  {name:'Packing',ops:[{name:'Poly Bag & Tag',unit:'Pcs',approvedRate:0,remarks:''}]},
-  {name:'QC / Inspection',ops:[{name:'Quality Check',unit:'Pcs',approvedRate:0,remarks:''}]},
-];
-const DEF_ARTICLES=[
-  {code:'GV99',name:'Blank T-Shirt S/SLV',desc:'Short sleeve blank tee'},
-  {code:'PRT-SS',name:'Printed T-Shirt S/SLV',desc:'Short sleeve printed tee'},
-  {code:'PRT-LS',name:'Printed T-Shirt L/SLV',desc:'Long sleeve printed tee'},
-  {code:'AU9',name:'Blank Pullover',desc:'Blank pullover sweatshirt'},
-  {code:'PRT-PO',name:'Printed Pullover',desc:'Printed pullover sweatshirt'},
-];
+// ═══════════════════════════════════════════════
+// SUPABASE INIT
+// ═══════════════════════════════════════════════
+const SUPA_URL = 'https://vvqsizxmlgprygpsjmmj.supabase.co';
+const SUPA_KEY = 'sb_publishable_0KenoMhDJJHmZtIEAyyg0g_M-N6WaTh';
+const { createClient } = supabase;
+const db = createClient(SUPA_URL, SUPA_KEY);
 
-function mkGroups(){return DEF_GROUPS.map(g=>({id:uid(),name:g.name,ops:g.ops.map(o=>({id:uid(),name:o.name,unit:o.unit,approvedRate:0,remarks:o.remarks}))}))}
+// ═══════════════════════════════════════════════
+// APP STATE (in-memory cache)
+// ═══════════════════════════════════════════════
+let ST = { articles: [], contractors: [], costSheets: [] };
+let VIEW = 'dashboard';
+let MODAL = null, MD = {}, TOAST = null, TTM = null;
+let EDIT_AID = null, CSF = {};
+let LOADING = false;
 
-function loadST(){
-  try{const s=localStorage.getItem('cmt_v3');if(s)return JSON.parse(s);}catch(e){}
-  return {articles:DEF_ARTICLES.map(a=>({...a,id:uid(),active:true,groups:mkGroups()})),contractors:[],costSheets:[]};
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+function pkr(n){ return 'PKR\u00a0'+(+n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}) }
+function vEl(id){ const e=document.getElementById(id); return e?e.value:'' }
+function calcTot(cs){ return (cs.items||[]).reduce((s,i)=>s+(+i.rate||0)*(+i.quantity||0),0) }
+function autoSN(){ return 'CS-'+String(ST.costSheets.length+1).padStart(3,'0') }
+
+function showLoad(){ LOADING=true; let b=document.getElementById('lbar'); if(!b){b=document.createElement('div');b.id='lbar';b.className='loading-bar';document.body.appendChild(b);} }
+function hideLoad(){ LOADING=false; const b=document.getElementById('lbar'); if(b)b.remove(); }
+
+function toast(msg, isErr=false){
+  TOAST=msg; if(TTM)clearTimeout(TTM);
+  let el=document.querySelector('.toast');
+  if(el){el.textContent=msg;el.className='toast'+(isErr?' toast-err':'');}
+  else{
+    el=document.createElement('div');
+    el.className='toast'+(isErr?' toast-err':'');
+    el.textContent=msg;
+    document.body.appendChild(el);
+  }
+  TTM=setTimeout(()=>{const t=document.querySelector('.toast');if(t)t.remove();},3000);
 }
-function saveST(){try{localStorage.setItem('cmt_v3',JSON.stringify(ST));}catch(e){}}
 
-let ST=loadST();
-let VIEW='dashboard',MODAL=null,MD={},TOAST=null,TTM=null,EDIT_AID=null,CSF={};
+function nav(v){ VIEW=v; render(); window.scrollTo(0,0); }
 
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function pkr(n){return 'PKR\u00a0'+(+n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}
-function calcTot(cs){return(cs.groups||[]).reduce((t,g)=>t+(g.ops||[]).reduce((s,o)=>s+(+o.rate||0)*(+o.qty||0),0),0)}
-function autoSN(){return 'CS-'+String(ST.costSheets.length+1).padStart(3,'0')}
-function vEl(id){const e=document.getElementById(id);return e?e.value:''}
+// ═══════════════════════════════════════════════
+// DATABASE FUNCTIONS
+// ═══════════════════════════════════════════════
 
-// ═══════════════════════ RENDER ═══════════════════════
+// ── ARTICLES ──
+async function dbLoadArticles(){
+  const {data,error}=await db.from('articles').select(`
+    *,
+    operation_groups ( id, name, sort_order,
+      operations ( id, name, unit, approved_rate, remarks, sort_order )
+    )
+  `).order('created_at');
+  if(error){toast('Error loading articles: '+error.message,true);return;}
+  // sort groups and ops
+  ST.articles=(data||[]).map(a=>({
+    ...a,
+    groups:(a.operation_groups||[]).sort((x,y)=>x.sort_order-y.sort_order).map(g=>({
+      ...g,
+      ops:(g.operations||[]).sort((x,y)=>x.sort_order-y.sort_order)
+    }))
+  }));
+}
+
+async function dbSaveArticle(art){
+  const payload={code:art.code,name:art.name,description:art.desc||art.description||'',active:art.active!==false};
+  if(art.id){
+    const{error}=await db.from('articles').update(payload).eq('id',art.id);
+    if(error){toast('Error: '+error.message,true);return false;}
+  } else {
+    const{data,error}=await db.from('articles').insert(payload).select().single();
+    if(error){toast('Error: '+error.message,true);return false;}
+    art.id=data.id;
+    // insert default groups
+    await dbInsertDefaultGroups(art.id);
+  }
+  await dbLoadArticles(); return true;
+}
+
+async function dbInsertDefaultGroups(artId){
+  const defGroups=[
+    {name:'Cutting',ops:[{name:'Fabric Cutting',unit:'Pcs',approved_rate:0,remarks:''}]},
+    {name:'Stitching',ops:[{name:'Body Stitching',unit:'Pcs',approved_rate:0,remarks:''},{name:'Sleeve Attachment',unit:'Pcs',approved_rate:0,remarks:''}]},
+    {name:'Finishing',ops:[{name:'Trimming',unit:'Pcs',approved_rate:0,remarks:''},{name:'Iron & Press',unit:'Pcs',approved_rate:0,remarks:''}]},
+    {name:'Packing',ops:[{name:'Poly Bag & Tag',unit:'Pcs',approved_rate:0,remarks:''}]},
+    {name:'QC / Inspection',ops:[{name:'Quality Check',unit:'Pcs',approved_rate:0,remarks:''}]},
+  ];
+  for(let gi=0;gi<defGroups.length;gi++){
+    const g=defGroups[gi];
+    const{data:gd,error:ge}=await db.from('operation_groups').insert({article_id:artId,name:g.name,sort_order:gi}).select().single();
+    if(ge||!gd) continue;
+    for(let oi=0;oi<g.ops.length;oi++){
+      const o=g.ops[oi];
+      await db.from('operations').insert({group_id:gd.id,article_id:artId,name:o.name,unit:o.unit,approved_rate:o.approved_rate,remarks:o.remarks,sort_order:oi});
+    }
+  }
+}
+
+async function dbDelArticle(id){
+  const{error}=await db.from('articles').delete().eq('id',id);
+  if(error){toast('Error: '+error.message,true);return false;}
+  await dbLoadArticles(); return true;
+}
+
+async function dbToggleArticle(id,active){
+  const{error}=await db.from('articles').update({active}).eq('id',id);
+  if(error){toast('Error: '+error.message,true);}
+  else { const a=ST.articles.find(x=>x.id===id); if(a) a.active=active; }
+}
+
+// ── GROUPS ──
+async function dbSaveGroup(artId, grp){
+  const art=ST.articles.find(a=>a.id===artId);
+  const so=art?art.groups.length:0;
+  if(grp.id){
+    const{error}=await db.from('operation_groups').update({name:grp.name}).eq('id',grp.id);
+    if(error){toast('Error: '+error.message,true);return false;}
+  } else {
+    const{data,error}=await db.from('operation_groups').insert({article_id:artId,name:grp.name,sort_order:so}).select().single();
+    if(error){toast('Error: '+error.message,true);return false;}
+    grp.id=data.id;
+  }
+  await dbLoadArticles(); return true;
+}
+
+async function dbDelGroup(id){
+  const{error}=await db.from('operation_groups').delete().eq('id',id);
+  if(error){toast('Error: '+error.message,true);return false;}
+  await dbLoadArticles(); return true;
+}
+
+// ── OPERATIONS ──
+async function dbSaveOp(artId, groupId, op){
+  const g=ST.articles.flatMap(a=>a.groups).find(x=>x.id===groupId);
+  const so=g?g.ops.length:0;
+  const payload={group_id:groupId,article_id:artId,name:op.name,unit:op.unit||'Pcs',approved_rate:+op.approvedRate||0,remarks:op.remarks||''};
+  if(op.id){
+    const{error}=await db.from('operations').update(payload).eq('id',op.id);
+    if(error){toast('Error: '+error.message,true);return false;}
+  } else {
+    const{error}=await db.from('operations').insert({...payload,sort_order:so});
+    if(error){toast('Error: '+error.message,true);return false;}
+  }
+  await dbLoadArticles(); return true;
+}
+
+async function dbDelOp(id){
+  const{error}=await db.from('operations').delete().eq('id',id);
+  if(error){toast('Error: '+error.message,true);return false;}
+  await dbLoadArticles(); return true;
+}
+
+// ── CONTRACTORS ──
+async function dbLoadContractors(){
+  const{data,error}=await db.from('contractors').select('*').order('created_at');
+  if(error){toast('Error loading contractors: '+error.message,true);return;}
+  ST.contractors=data||[];
+}
+
+async function dbSaveCon(con){
+  const payload={name:con.name,location:con.location||'',contact:con.contact||'',remarks:con.remarks||'',active:con.active!==false};
+  if(con.id){
+    const{error}=await db.from('contractors').update(payload).eq('id',con.id);
+    if(error){toast('Error: '+error.message,true);return false;}
+  } else {
+    const{error}=await db.from('contractors').insert(payload);
+    if(error){toast('Error: '+error.message,true);return false;}
+  }
+  await dbLoadContractors(); return true;
+}
+
+async function dbDelCon(id){
+  const{error}=await db.from('contractors').delete().eq('id',id);
+  if(error){toast('Error: '+error.message,true);return false;}
+  await dbLoadContractors(); return true;
+}
+
+async function dbToggleCon(id,active){
+  const{error}=await db.from('contractors').update({active}).eq('id',id);
+  if(error){toast('Error: '+error.message,true);}
+  else { const c=ST.contractors.find(x=>x.id===id); if(c) c.active=active; }
+}
+
+// ── RATE CARDS ──
+async function dbLoadRateCards(conId,artId){
+  const{data,error}=await db.from('rate_cards').select('*').eq('contractor_id',conId).eq('article_id',artId);
+  if(error) return {};
+  const map={};
+  (data||[]).forEach(r=>{ map[r.operation_id]=r.rate; });
+  return map;
+}
+
+async function dbSaveRateCard(conId,artId,rates){
+  // upsert all rates
+  const art=ST.articles.find(a=>a.id===artId);
+  if(!art) return false;
+  const rows=[];
+  art.groups.forEach(g=>g.ops.forEach(op=>{
+    rows.push({contractor_id:conId,operation_id:op.id,article_id:artId,rate:+rates[op.id]||0});
+  }));
+  const{error}=await db.from('rate_cards').upsert(rows,{onConflict:'contractor_id,operation_id'});
+  if(error){toast('Error: '+error.message,true);return false;}
+  return true;
+}
+
+// ── COST SHEETS ──
+async function dbLoadCostSheets(){
+  const{data,error}=await db.from('cost_sheets').select(`
+    *,
+    cost_sheet_items (*)
+  `).order('created_at');
+  if(error){toast('Error loading cost sheets: '+error.message,true);return;}
+  ST.costSheets=(data||[]).map(cs=>({
+    ...cs,
+    items:cs.cost_sheet_items||[]
+  }));
+}
+
+async function dbSaveCS(cs, editId){
+  const payload={
+    sheet_no:cs.sheetNo||cs.sheet_no||autoSN(),
+    date:cs.date||null,
+    article_id:cs.articleId||cs.article_id,
+    contractor_id:cs.contractorId||cs.contractor_id||null,
+    description:cs.description||'',
+    buyer:cs.buyer||'',
+    season:cs.season||'',
+    quantity:+cs.quantity||0
+  };
+  let csId=editId;
+  if(editId){
+    const{error}=await db.from('cost_sheets').update(payload).eq('id',editId);
+    if(error){toast('Error: '+error.message,true);return false;}
+    await db.from('cost_sheet_items').delete().eq('cost_sheet_id',editId);
+  } else {
+    const{data,error}=await db.from('cost_sheets').insert(payload).select().single();
+    if(error){toast('Error: '+error.message,true);return false;}
+    csId=data.id;
+  }
+  // insert items
+  const items=[];
+  (cs.groups||[]).forEach(g=>{
+    (g.ops||[]).forEach(op=>{
+      items.push({
+        cost_sheet_id:csId,
+        operation_id:op.id||op.operation_id,
+        group_id:g.id||g.group_id,
+        group_name:g.name,
+        operation_name:op.name,
+        unit:op.unit,
+        approved_rate:+op.approvedRate||+op.approved_rate||0,
+        rate:+op.rate||0,
+        quantity:+op.qty||+op.quantity||0
+      });
+    });
+  });
+  if(items.length){
+    const{error}=await db.from('cost_sheet_items').insert(items);
+    if(error){toast('Error saving items: '+error.message,true);return false;}
+  }
+  await dbLoadCostSheets(); return true;
+}
+
+async function dbDelCS(id){
+  const{error}=await db.from('cost_sheets').delete().eq('id',id);
+  if(error){toast('Error: '+error.message,true);return false;}
+  await dbLoadCostSheets(); return true;
+}
+
+// ── INITIAL LOAD ──
+async function initLoad(){
+  showLoad();
+  await Promise.all([dbLoadArticles(), dbLoadContractors(), dbLoadCostSheets()]);
+  hideLoad();
+  render();
+}
+
+// ═══════════════════════════════════════════════
+// RENDER ENGINE
+// ═══════════════════════════════════════════════
 function render(){
   document.getElementById('app').innerHTML=
     `<div class="sidebar">${rSidebar()}</div><div class="main" id="mc">${rMain()}</div>`+
-    (MODAL?rModal():'')+(TOAST?`<div class="toast">${esc(TOAST)}</div>`:'');
+    (MODAL?rModal():'');
   bind();
 }
 
 function rSidebar(){
-  const ni=(id,ic,lb)=>`<div class="nav-item${VIEW===id||VIEW.startsWith(id+'_')||VIEW.startsWith(id+'-')?' active':''}" data-nav="${id}"><span class="nav-icon">${ic}</span>${lb}</div>`;
-  return `<div class="logo"><div class="logo-title">CMT COSTING</div><div class="logo-sub">Pre-Order Planner</div><div class="logo-ver">v2.0 · NFP NazeerFinPro</div></div>
+  const ni=(id,ic,lb)=>`<div class="nav-item${VIEW===id||VIEW.startsWith(id+'-')?' active':''}" data-nav="${id}"><span class="nav-icon">${ic}</span>${lb}</div>`;
+  return `<div class="logo"><div class="logo-title">CMT COSTING</div><div class="logo-sub">Pre-Order Planner</div><div class="logo-ver">v2.0 · Supabase Cloud</div></div>
   <nav class="nav">
     <div class="nav-section">Main</div>${ni('dashboard','⬡','Dashboard')}
     <div class="nav-section">Setup</div>${ni('articles','◈','Articles & Groups')}${ni('contractors','◎','Contractors')}${ni('ratecomp','⇄','Rate Comparison')}
     <div class="nav-section">Costing</div>${ni('costsheets','◉','Cost Sheets')}${ni('newcs','＋','New Cost Sheet')}
   </nav>
-  <div style="padding:14px;font-size:10px;color:var(--muted);border-top:1px solid var(--border);line-height:1.8">NFP · NazeerFinPro<br>Data: Browser localStorage</div>`;
+  <div style="padding:14px;font-size:10px;color:var(--muted);border-top:1px solid var(--border);line-height:1.8">NFP · NazeerFinPro<br><span style="color:var(--green)">● Cloud DB Connected</span></div>`;
 }
 
 function rMain(){
@@ -177,13 +434,16 @@ function rMain(){
   return '<div style="padding:40px;color:var(--muted)">Not found</div>';
 }
 
-// ═══════════════════════ DASHBOARD ═══════════════════════
+// ═══════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════
 function rDash(){
   const totCost=ST.costSheets.reduce((s,cs)=>s+calcTot(cs),0);
   const rec=ST.costSheets.slice(-5).reverse();
   return `
-  <div class="page-header"><div><div class="page-title">CMT <span>Pre-Order</span> Costing</div><div class="page-sub">Cut · Make · Trim — Garment Cost Planner · PKR</div></div></div>
-  <div class="snote">💾 Data saves automatically in your browser (localStorage). It persists across sessions on this device. Do not clear browser data to avoid losing records.</div>
+  <div class="page-header"><div><div class="page-title">CMT <span>Pre-Order</span> Costing</div><div class="page-sub">Cut · Make · Trim — Garment Cost Planner · PKR</div></div>
+  <button class="btn btn-ghost btn-sm" data-action="refresh_all">↻ Refresh</button></div>
+  <div class="db-note">☁ Connected to Supabase Cloud Database — data is saved permanently and accessible from any device.</div>
   <div class="stats-row">
     <div class="stat-card"><div class="stat-val">${ST.articles.length}</div><div class="stat-label">Articles</div></div>
     <div class="stat-card"><div class="stat-val">${ST.articles.filter(a=>a.active).length}</div><div class="stat-label">Active</div></div>
@@ -193,28 +453,49 @@ function rDash(){
   </div>
   ${rec.length?`<div class="card"><div class="card-title">Recent Cost Sheets</div><div class="tw"><table>
     <thead><tr><th>Sheet#</th><th>Article</th><th>Contractor</th><th>Buyer</th><th>Qty</th><th>Total CMT</th><th>Per Unit</th><th></th></tr></thead>
-    <tbody>${rec.map(cs=>{const art=ST.articles.find(a=>a.id===cs.articleId);const con=ST.contractors.find(c=>c.id===cs.contractorId);const tot=calcTot(cs);const qty=+cs.quantity||0;
-    return`<tr><td><span class="chip">${esc(cs.sheetNo||'—')}</span></td><td><b>${esc(art?art.code:'?')}</b></td><td style="color:var(--muted)">${esc(con?con.name:'—')}</td><td style="color:var(--muted)">${esc(cs.buyer||'—')}</td><td class="mono">${qty.toLocaleString()}</td><td class="mono" style="color:var(--accent)">${pkr(tot)}</td><td class="mono" style="color:var(--muted)">${qty>0?pkr(tot/qty):'—'}</td><td><button class="btn btn-ghost btn-xs" data-action="view_cs" data-id="${cs.id}">View</button></td></tr>`;}).join('')}
+    <tbody>${rec.map(cs=>{
+      const art=ST.articles.find(a=>a.id===cs.article_id);
+      const con=ST.contractors.find(c=>c.id===cs.contractor_id);
+      const tot=calcTot(cs);const qty=+cs.quantity||0;
+      return`<tr><td><span class="chip">${esc(cs.sheet_no||'—')}</span></td><td><b>${esc(art?art.code:'?')}</b></td>
+      <td style="color:var(--muted)">${esc(con?con.name:'—')}</td><td style="color:var(--muted)">${esc(cs.buyer||'—')}</td>
+      <td class="mono">${qty.toLocaleString()}</td><td class="mono" style="color:var(--accent)">${pkr(tot)}</td>
+      <td class="mono" style="color:var(--muted)">${qty>0?pkr(tot/qty):'—'}</td>
+      <td><button class="btn btn-ghost btn-xs" data-action="view_cs" data-id="${cs.id}">View</button></td></tr>`;}).join('')}
     </tbody></table></div></div>`:''}
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
-    ${[['articles','◈','Articles & Groups','Garment articles with operation groups'],['contractors','◎','Contractors','Manage contractors and rate cards'],['newcs','＋','New Cost Sheet','Create a pre-order CMT cost sheet']].map(([n,i,t,d])=>`<div class="card" style="cursor:pointer" data-nav="${n}"><div style="font-size:28px;margin-bottom:8px">${i}</div><div style="font-size:14px;font-weight:700">${t}</div><div style="font-size:11.5px;color:var(--muted);margin-top:3px">${d}</div></div>`).join('')}
+    ${[['articles','◈','Articles & Groups','Garment articles with operation groups'],
+       ['contractors','◎','Contractors','Manage contractors and rate cards'],
+       ['newcs','＋','New Cost Sheet','Create a pre-order CMT cost sheet']].map(([n,i,t,d])=>
+    `<div class="card" style="cursor:pointer" data-nav="${n}"><div style="font-size:28px;margin-bottom:8px">${i}</div><div style="font-size:14px;font-weight:700">${t}</div><div style="font-size:11.5px;color:var(--muted);margin-top:3px">${d}</div></div>`).join('')}
   </div>`;
 }
 
-// ═══════════════════════ ARTICLES ═══════════════════════
+// ═══════════════════════════════════════════════
+// ARTICLES
+// ═══════════════════════════════════════════════
 function rArticles(){
-  return `<div class="page-header"><div><div class="page-title">Garment <span>Articles</span></div></div><button class="btn btn-primary" data-action="open_add_art">+ Add Article</button></div>
+  return `<div class="page-header"><div><div class="page-title">Garment <span>Articles</span></div></div>
+  <button class="btn btn-primary" data-action="open_add_art">+ Add Article</button></div>
   <div class="card">${!ST.articles.length?`<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-text">No articles yet</div></div>`:
   `<div class="tw"><table><thead><tr><th>Code</th><th>Name</th><th>Description</th><th>Groups</th><th>Total Ops</th><th>Status</th><th>Actions</th></tr></thead>
   <tbody>${ST.articles.map(a=>{const ops=a.groups.reduce((s,g)=>s+g.ops.length,0);return`<tr>
-    <td><span class="chip">${esc(a.code)}</span></td><td><b>${esc(a.name)}</b></td><td style="color:var(--muted);font-size:12px">${esc(a.desc)||'—'}</td>
-    <td><span class="badge badge-blue">${a.groups.length}</span></td><td><span class="badge badge-orange">${ops}</span></td>
-    <td><label class="toggle"><input type="checkbox" ${a.active?'checked':''} data-action="toggle_art" data-id="${a.id}"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td>
-    <td><div class="ag"><button class="btn btn-ghost btn-xs" data-action="edit_art" data-id="${a.id}">Edit</button><button class="btn btn-blue btn-xs" data-action="open_ops" data-id="${a.id}">Groups &amp; Ops</button><button class="btn btn-danger btn-xs" data-action="del_art" data-id="${a.id}">Delete</button></div></td>
+    <td><span class="chip">${esc(a.code)}</span></td><td><b>${esc(a.name)}</b></td>
+    <td style="color:var(--muted);font-size:12px">${esc(a.description||'—')}</td>
+    <td><span class="badge badge-blue">${a.groups.length}</span></td>
+    <td><span class="badge badge-orange">${ops}</span></td>
+    <td><label class="toggle"><input type="checkbox" ${a.active?'checked':''} data-action="toggle_art" data-id="${a.id}" data-val="${a.active}"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td>
+    <td><div class="ag">
+      <button class="btn btn-ghost btn-xs" data-action="edit_art" data-id="${a.id}">Edit</button>
+      <button class="btn btn-blue btn-xs" data-action="open_ops" data-id="${a.id}">Groups &amp; Ops</button>
+      <button class="btn btn-danger btn-xs" data-action="del_art" data-id="${a.id}">Delete</button>
+    </div></td>
   </tr>`;}).join('')}</tbody></table></div>`}</div>`;
 }
 
-// ═══════════════════════ OPS EDITOR ═══════════════════════
+// ═══════════════════════════════════════════════
+// OPS EDITOR
+// ═══════════════════════════════════════════════
 function rOpsEditor(){
   const art=ST.articles.find(a=>a.id===EDIT_AID);
   if(!art) return `<div style="padding:40px;color:var(--muted)">Not found. <span data-nav="articles" style="color:var(--accent);cursor:pointer">Back</span></div>`;
@@ -222,9 +503,9 @@ function rOpsEditor(){
   return `<div class="page-header"><div>
     <button class="btn btn-ghost btn-sm" data-nav="articles" style="margin-bottom:10px">← Articles</button>
     <div class="page-title"><span>${esc(art.code)}</span> — Groups &amp; Operations</div>
-    <div class="page-sub">${esc(art.name)} · ${art.groups.length} groups · ${totalOps} operations total</div>
+    <div class="page-sub">${esc(art.name)} · ${art.groups.length} groups · ${totalOps} operations</div>
   </div><button class="btn btn-primary" data-action="open_add_grp" data-artid="${art.id}">+ Add Group</button></div>
-  ${!art.groups.length?`<div class="card"><div class="empty-state"><div class="empty-icon">⚙</div><div class="empty-text">No groups yet</div><div class="empty-sub">Add an operation group to begin</div></div></div>`:''}
+  ${!art.groups.length?`<div class="card"><div class="empty-state"><div class="empty-icon">⚙</div><div class="empty-text">No groups yet</div></div></div>`:''}
   ${art.groups.map(g=>`<div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
       <div style="display:flex;align-items:center;gap:10px">
@@ -234,75 +515,104 @@ function rOpsEditor(){
       <div class="ag">
         <button class="btn btn-ghost btn-xs" data-action="edit_grp" data-artid="${art.id}" data-gid="${g.id}">Rename</button>
         <button class="btn btn-primary btn-xs" data-action="open_add_op" data-artid="${art.id}" data-gid="${g.id}">+ Operation</button>
-        <button class="btn btn-danger btn-xs" data-action="del_grp" data-artid="${art.id}" data-gid="${g.id}">Delete Group</button>
+        <button class="btn btn-danger btn-xs" data-action="del_grp" data-gid="${g.id}">Delete Group</button>
       </div>
     </div>
     ${!g.ops.length?`<div style="text-align:center;padding:14px;color:var(--muted);font-size:12.5px">No operations in this group</div>`:`
     <div class="tw"><table><thead><tr><th>#</th><th>Operation</th><th>Unit</th><th>Approved Rate (PKR)</th><th>Remarks</th><th>Actions</th></tr></thead>
     <tbody>${g.ops.map((op,i)=>`<tr>
-      <td class="mono" style="color:var(--muted)">${String(i+1).padStart(2,'0')}</td><td><b>${esc(op.name)}</b></td>
-      <td><span class="chip">${esc(op.unit)}</span></td><td class="mono" style="color:var(--green)">${pkr(op.approvedRate||0)}</td>
-      <td style="color:var(--muted);font-size:12px">${esc(op.remarks)||'—'}</td>
-      <td><div class="ag"><button class="btn btn-ghost btn-xs" data-action="edit_op" data-artid="${art.id}" data-gid="${g.id}" data-opid="${op.id}">Edit</button><button class="btn btn-danger btn-xs" data-action="del_op" data-artid="${art.id}" data-gid="${g.id}" data-opid="${op.id}">Delete</button></div></td>
+      <td class="mono" style="color:var(--muted)">${String(i+1).padStart(2,'0')}</td>
+      <td><b>${esc(op.name)}</b></td><td><span class="chip">${esc(op.unit)}</span></td>
+      <td class="mono" style="color:var(--green)">${pkr(op.approved_rate||0)}</td>
+      <td style="color:var(--muted);font-size:12px">${esc(op.remarks||'—')}</td>
+      <td><div class="ag">
+        <button class="btn btn-ghost btn-xs" data-action="edit_op" data-artid="${art.id}" data-gid="${g.id}" data-opid="${op.id}">Edit</button>
+        <button class="btn btn-danger btn-xs" data-action="del_op" data-opid="${op.id}">Delete</button>
+      </div></td>
     </tr>`).join('')}</tbody></table></div>`}
   </div>`).join('')}`;
 }
 
-// ═══════════════════════ CONTRACTORS ═══════════════════════
+// ═══════════════════════════════════════════════
+// CONTRACTORS
+// ═══════════════════════════════════════════════
 function rContractors(){
-  return `<div class="page-header"><div><div class="page-title"><span>Contractors</span></div><div class="page-sub">Manage contractors and their CMT rate cards per article</div></div>
+  return `<div class="page-header"><div><div class="page-title"><span>Contractors</span></div><div class="page-sub">Manage contractors and CMT rate cards per article</div></div>
   <button class="btn btn-primary" data-action="open_add_con">+ Add Contractor</button></div>
-  <div class="card">${!ST.contractors.length?`<div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">No contractors yet</div><div class="empty-sub">Add a contractor then set their rate card per article</div></div>`:
-  `<div class="tw"><table><thead><tr><th>Contractor Name</th><th>Location / Floor</th><th>Contact</th><th>Status</th><th>Rate Cards</th><th>Actions</th></tr></thead>
-  <tbody>${ST.contractors.map(c=>{const rc=c.rateCards?Object.keys(c.rateCards).length:0;return`<tr>
-    <td><b>${esc(c.name)}</b></td><td style="color:var(--muted)">${esc(c.location||'—')}</td><td style="color:var(--muted)">${esc(c.contact||'—')}</td>
+  <div class="card">${!ST.contractors.length?`<div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">No contractors yet</div></div>`:
+  `<div class="tw"><table><thead><tr><th>Name</th><th>Location / Floor</th><th>Contact</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>${ST.contractors.map(c=>`<tr>
+    <td><b>${esc(c.name)}</b></td><td style="color:var(--muted)">${esc(c.location||'—')}</td>
+    <td style="color:var(--muted)">${esc(c.contact||'—')}</td>
     <td><label class="toggle"><input type="checkbox" ${c.active?'checked':''} data-action="toggle_con" data-id="${c.id}"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td>
-    <td><span class="badge badge-blue">${rc} articles</span></td>
-    <td><div class="ag"><button class="btn btn-ghost btn-xs" data-action="edit_con" data-id="${c.id}">Edit</button><button class="btn btn-purple btn-xs" data-action="open_rc" data-id="${c.id}">Rate Card</button><button class="btn btn-danger btn-xs" data-action="del_con" data-id="${c.id}">Delete</button></div></td>
-  </tr>`;}).join('')}</tbody></table></div>`}</div>`;
+    <td><div class="ag">
+      <button class="btn btn-ghost btn-xs" data-action="edit_con" data-id="${c.id}">Edit</button>
+      <button class="btn btn-purple btn-xs" data-action="open_rc" data-id="${c.id}">Rate Card</button>
+      <button class="btn btn-danger btn-xs" data-action="del_con" data-id="${c.id}">Delete</button>
+    </div></td>
+  </tr>`).join('')}</tbody></table></div>`}</div>`;
 }
 
-// ═══════════════════════ RATE COMPARISON ═══════════════════════
+// ═══════════════════════════════════════════════
+// RATE COMPARISON
+// ═══════════════════════════════════════════════
 function rRateComp(){
   const aArts=ST.articles.filter(a=>a.active);
   const aCons=ST.contractors.filter(c=>c.active);
   const selId=MD.rcArtId||(aArts[0]?aArts[0].id:'');
   const art=ST.articles.find(a=>a.id===selId);
+  // build rate map from cost_sheet_items is not ideal; use rate_cards via MD cache
+  const rcMap=MD.rcMap||{};
   return `<div class="page-header"><div><div class="page-title">Rate <span>Comparison</span></div><div class="page-sub">Contractor rates vs approved rate per operation</div></div></div>
   <div class="card" style="margin-bottom:16px"><div class="fr fr2" style="max-width:400px">
     <div class="form-group" style="margin-bottom:0"><label>Select Article</label>
-    <select data-action="rc_sel_art"><option value="">— Select —</option>${aArts.map(a=>`<option value="${a.id}" ${selId===a.id?'selected':''}>${esc(a.code)} · ${esc(a.name)}</option>`).join('')}</select></div>
+    <select data-action="rc_sel_art"><option value="">— Select —</option>
+    ${aArts.map(a=>`<option value="${a.id}" ${selId===a.id?'selected':''}>${esc(a.code)} · ${esc(a.name)}</option>`).join('')}
+    </select></div>
   </div></div>
-  ${!art?`<div class="card"><div class="empty-state"><div class="empty-icon">⇄</div><div class="empty-sub">Select an article to view rate comparison</div></div></div>`:`
-  ${!aCons.length?`<div class="card"><div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">No active contractors</div><div class="empty-sub">Add contractors and set rate cards first</div></div></div>`:`
-  <div class="card"><div class="card-title">${esc(art.code)} · ${esc(art.name)} — Rate Comparison (PKR per Pc)</div>
-  <div class="tw"><table><thead><tr><th>Group</th><th>Operation</th><th>Unit</th><th style="color:var(--green)">Approved Rate</th>${aCons.map(c=>`<th style="color:var(--blue)">${esc(c.name)}</th>`).join('')}</tr></thead>
-  <tbody>${art.groups.map(g=>g.ops.map((op,oi)=>{
+  ${!art?`<div class="card"><div class="empty-state"><div class="empty-icon">⇄</div><div class="empty-sub">Select an article to view comparison</div></div></div>`:
+  !aCons.length?`<div class="card"><div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">No active contractors</div></div></div>`:`
+  <div class="card"><div class="card-title">${esc(art.code)} · ${esc(art.name)} — Rate Comparison (PKR/Pc)</div>
+  <div class="tw"><table><thead><tr><th>Group</th><th>Operation</th><th>Unit</th>
+  <th style="color:var(--green)">Approved Rate</th>
+  ${aCons.map(c=>`<th style="color:var(--blue)">${esc(c.name)}</th>`).join('')}
+  </tr></thead><tbody>
+  ${art.groups.map(g=>g.ops.map((op,oi)=>{
     const cells=aCons.map(c=>{
-      const rc=c.rateCards&&c.rateCards[art.id];
-      const rate=rc&&rc[op.id]!==undefined?rc[op.id]:null;
-      const apr=+op.approvedRate||0;
+      const conMap=rcMap[c.id]||{};
+      const rate=conMap[op.id]!==undefined?conMap[op.id]:null;
+      const apr=+op.approved_rate||0;
       let sty='color:var(--muted)';
       if(rate!==null&&apr>0) sty=rate<=apr?'color:var(--green);font-weight:600':'color:var(--red);font-weight:600';
       return `<td class="mono" style="${sty}">${rate!==null?pkr(rate):'—'}</td>`;
     }).join('');
-    return `<tr><td style="color:var(--muted);font-size:11.5px">${oi===0?`<span style="font-weight:700;color:var(--accent)">${esc(g.name)}</span>`:''}</td><td>${esc(op.name)}</td><td><span class="chip">${esc(op.unit)}</span></td><td class="mono" style="color:var(--green)">${pkr(op.approvedRate||0)}</td>${cells}</tr>`;
+    return`<tr><td style="color:var(--muted);font-size:11.5px">${oi===0?`<span style="font-weight:700;color:var(--accent)">${esc(g.name)}</span>`:''}</td>
+    <td>${esc(op.name)}</td><td><span class="chip">${esc(op.unit)}</span></td>
+    <td class="mono" style="color:var(--green)">${pkr(op.approved_rate||0)}</td>${cells}</tr>`;
   }).join('')).join('')}
   </tbody></table></div>
-  <div style="margin-top:10px;font-size:11px;color:var(--muted)"><span style="color:var(--green)">■</span> At/below approved &nbsp;<span style="color:var(--red)">■</span> Above approved &nbsp;<span style="color:var(--muted)">■</span> Not set</div>
-  </div>`}`}`;
+  <div style="margin-top:10px;font-size:11px;color:var(--muted)">
+    <span style="color:var(--green)">■</span> At/below approved &nbsp;
+    <span style="color:var(--red)">■</span> Above approved &nbsp;
+    <span style="color:var(--muted)">■</span> Not set
+  </div></div>`}`;
 }
 
-// ═══════════════════════ COST SHEET LIST ═══════════════════════
+// ═══════════════════════════════════════════════
+// COST SHEETS LIST
+// ═══════════════════════════════════════════════
 function rCSList(){
-  return `<div class="page-header"><div><div class="page-title">Cost <span>Sheets</span></div></div><button class="btn btn-primary" data-nav="newcs">+ New Sheet</button></div>
+  return `<div class="page-header"><div><div class="page-title">Cost <span>Sheets</span></div></div>
+  <button class="btn btn-primary" data-nav="newcs">+ New Sheet</button></div>
   ${!ST.costSheets.length?`<div class="card"><div class="empty-state"><div class="empty-icon">◉</div><div class="empty-text">No cost sheets yet</div></div></div>`:`
   <div class="card"><div class="tw"><table>
     <thead><tr><th>Sheet#</th><th>Article</th><th>Contractor</th><th>Description</th><th>Buyer</th><th>Qty</th><th>Total CMT</th><th>Per Unit</th><th>Actions</th></tr></thead>
     <tbody>${ST.costSheets.map(cs=>{
-      const art=ST.articles.find(a=>a.id===cs.articleId);const con=ST.contractors.find(c=>c.id===cs.contractorId);
+      const art=ST.articles.find(a=>a.id===cs.article_id);
+      const con=ST.contractors.find(c=>c.id===cs.contractor_id);
       const tot=calcTot(cs);const qty=+cs.quantity||0;
-      return`<tr><td><span class="chip">${esc(cs.sheetNo||'—')}</span></td>
+      return`<tr>
+        <td><span class="chip">${esc(cs.sheet_no||'—')}</span></td>
         <td><b>${esc(art?art.code:'?')}</b><div style="font-size:10.5px;color:var(--muted)">${esc(art?art.name:'')}</div></td>
         <td style="font-size:12px">${esc(con?con.name:'—')}</td>
         <td style="font-size:12px;color:var(--muted)">${esc(cs.description||'—')}</td>
@@ -313,7 +623,6 @@ function rCSList(){
         <td><div class="ag">
           <button class="btn btn-ghost btn-xs" data-action="view_cs" data-id="${cs.id}">View</button>
           <button class="btn btn-ghost btn-xs" data-action="edit_cs" data-id="${cs.id}">Edit</button>
-          <button class="btn btn-green btn-xs" data-action="dup_cs" data-id="${cs.id}">Dup</button>
           <button class="btn btn-blue btn-xs" data-action="dl_xls" data-id="${cs.id}">XLS</button>
           <button class="btn btn-amber btn-xs" data-action="dl_pdf" data-id="${cs.id}">PDF</button>
           <button class="btn btn-danger btn-xs" data-action="del_cs" data-id="${cs.id}">Del</button>
@@ -322,49 +631,97 @@ function rCSList(){
     </tbody></table></div></div>`}`;
 }
 
-// ═══════════════════════ NEW / EDIT CS ═══════════════════════
+// ═══════════════════════════════════════════════
+// NEW / EDIT COST SHEET
+// ═══════════════════════════════════════════════
 function rNewCS(editId){
   const isEdit=!!editId;
-  if(isEdit){const cs=ST.costSheets.find(c=>c.id===editId);if(cs&&CSF._id!==editId)CSF={...JSON.parse(JSON.stringify(cs)),_id:editId};}
-  if(!isEdit&&!CSF._init){CSF={articleId:'',contractorId:'',sheetNo:autoSN(),description:'',buyer:'',season:'',quantity:0,date:new Date().toISOString().split('T')[0],groups:[],_init:true};}
+  if(isEdit&&CSF._id!==editId){
+    const cs=ST.costSheets.find(c=>c.id===editId);
+    if(cs){
+      const art=ST.articles.find(a=>a.id===cs.article_id);
+      CSF={
+        _id:editId,
+        articleId:cs.article_id, contractorId:cs.contractor_id||'',
+        sheetNo:cs.sheet_no, date:cs.date||'', description:cs.description||'',
+        buyer:cs.buyer||'', season:cs.season||'', quantity:cs.quantity||0,
+        groups:art?art.groups.map(g=>({
+          id:g.id,name:g.name,
+          ops:g.ops.map(op=>{
+            const item=cs.items.find(i=>i.operation_id===op.id);
+            return{id:op.id,name:op.name,unit:op.unit,approvedRate:op.approved_rate||0,
+              rate:item?+item.rate:0,qty:item?+item.quantity:0};
+          })
+        })):[]
+      };
+    }
+  }
+  if(!isEdit&&!CSF._init){
+    CSF={articleId:'',contractorId:'',sheetNo:autoSN(),description:'',buyer:'',season:'',
+      quantity:0,date:new Date().toISOString().split('T')[0],groups:[],_init:true};
+  }
   const aArts=ST.articles.filter(a=>a.active);
   const aCons=ST.contractors.filter(c=>c.active);
   const art=ST.articles.find(a=>a.id===CSF.articleId);
-  const tot=CSF.groups?calcTot(CSF):0;const qty=+CSF.quantity||0;
+  const tot=CSF.groups?CSF.groups.reduce((t,g)=>t+g.ops.reduce((s,o)=>s+(+o.rate||0)*(+o.qty||0),0),0):0;
+  const qty=+CSF.quantity||0;
 
   let opsHtml='';
   if(art&&CSF.groups&&CSF.groups.length){
     opsHtml=`<div class="sep"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px">CMT Operations — Enter Rates &amp; Quantities</div>
-      <div class="ag"><button class="btn btn-blue btn-sm" data-action="dl_xls_form">📊 Excel</button><button class="btn btn-amber btn-sm" data-action="dl_pdf_form">📄 PDF</button><button class="btn btn-green" data-action="save_cs" data-edit="${editId||''}">💾 Save Sheet</button></div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px">CMT Operations</div>
+      <div class="ag">
+        <button class="btn btn-blue btn-sm" data-action="dl_xls_form">📊 Excel</button>
+        <button class="btn btn-amber btn-sm" data-action="dl_pdf_form">📄 PDF</button>
+        <button class="btn btn-green" data-action="save_cs" data-edit="${editId||''}">💾 Save Sheet</button>
+      </div>
     </div>
-    ${CSF.groups.map(g=>`<div class="grp-header">${esc(g.name)}</div><div class="grp-table"><div class="tw">
-    <table><thead><tr><th>#</th><th>Operation</th><th>Unit</th><th style="color:var(--green)">Approved (PKR)</th><th>Rate (PKR)</th><th>Qty (Pcs)</th><th>Amount (PKR)</th></tr></thead>
-    <tbody>${g.ops.map((op,i)=>{const amt=(+op.rate||0)*(+op.qty||0);return`<tr>
-      <td class="mono" style="color:var(--muted)">${String(i+1).padStart(2,'0')}</td><td><b>${esc(op.name)}</b></td><td><span class="chip">${esc(op.unit)}</span></td>
-      <td class="mono" style="color:var(--green)">${pkr(op.approvedRate||0)}</td>
-      <td><input type="number" class="rate-inp" value="${+op.rate||0}" data-csop-rate="${op.id}" data-gid="${g.id}" min="0" step="0.01"/></td>
-      <td><input type="number" class="qty-inp" value="${+op.qty||0}" data-csop-qty="${op.id}" data-gid="${g.id}" min="0"/></td>
-      <td class="mono" style="color:var(--accent)" id="amt_${op.id}">${pkr(amt)}</td>
-    </tr>`;}).join('')}
-    <tr class="grp-sub"><td colspan="6" style="text-align:right;padding-right:14px">Group Subtotal:</td><td class="mono" style="color:var(--accent)" id="sub_${g.id}">${pkr(g.ops.reduce((s,o)=>s+(+o.rate||0)*(+o.qty||0),0))}</td></tr>
-    </tbody></table></div></div>`).join('')}
-    <div class="cs-totals"><div class="cs-ti"><div class="cs-tv" id="cs_tot">${pkr(tot)}</div><div class="cs-tl">Total CMT Cost (PKR)</div></div><div class="cs-ti"><div class="cs-tv" id="cs_pu">${qty>0?pkr(tot/qty):'—'}</div><div class="cs-tl">Per Unit Cost (PKR)</div></div><div class="cs-ti"><div class="cs-tv">${qty>0?qty.toLocaleString():'—'}</div><div class="cs-tl">Order Quantity (Pcs)</div></div></div>
-    <div style="margin-top:16px;display:flex;justify-content:flex-end"><button class="btn btn-green" data-action="save_cs" data-edit="${editId||''}">💾 Save Cost Sheet</button></div>`;
-  } else if(art&&CSF.groups&&!CSF.groups.length){
-    opsHtml=`<div class="empty-state" style="padding:22px"><div class="empty-text">This article has no operation groups. <span style="color:var(--accent);cursor:pointer" data-action="open_ops" data-id="${art.id}">→ Add groups</span></div></div>`;
+    ${CSF.groups.map(g=>`
+    <div class="grp-header">${esc(g.name)}</div>
+    <div class="grp-table"><div class="tw"><table>
+      <thead><tr><th>#</th><th>Operation</th><th>Unit</th><th style="color:var(--green)">Approved (PKR)</th><th>Rate (PKR)</th><th>Qty (Pcs)</th><th>Amount (PKR)</th></tr></thead>
+      <tbody>${g.ops.map((op,i)=>{const amt=(+op.rate||0)*(+op.qty||0);return`<tr>
+        <td class="mono" style="color:var(--muted)">${String(i+1).padStart(2,'0')}</td>
+        <td><b>${esc(op.name)}</b></td><td><span class="chip">${esc(op.unit)}</span></td>
+        <td class="mono" style="color:var(--green)">${pkr(op.approvedRate||0)}</td>
+        <td><input type="number" class="rate-inp" value="${+op.rate||0}" data-csop-rate="${op.id}" data-gid="${g.id}" min="0" step="0.01"/></td>
+        <td><input type="number" class="qty-inp" value="${+op.qty||0}" data-csop-qty="${op.id}" data-gid="${g.id}" min="0"/></td>
+        <td class="mono" style="color:var(--accent)" id="amt_${op.id}">${pkr(amt)}</td>
+      </tr>`;}).join('')}
+      <tr class="grp-sub"><td colspan="6" style="text-align:right;padding-right:14px">Group Subtotal:</td>
+      <td class="mono" style="color:var(--accent)" id="sub_${g.id}">${pkr(g.ops.reduce((s,o)=>s+(+o.rate||0)*(+o.qty||0),0))}</td></tr>
+      </tbody></table></div></div>`).join('')}
+    <div class="cs-totals">
+      <div class="cs-ti"><div class="cs-tv" id="cs_tot">${pkr(tot)}</div><div class="cs-tl">Total CMT Cost (PKR)</div></div>
+      <div class="cs-ti"><div class="cs-tv" id="cs_pu">${qty>0?pkr(tot/qty):'—'}</div><div class="cs-tl">Per Unit Cost (PKR)</div></div>
+      <div class="cs-ti"><div class="cs-tv">${qty>0?qty.toLocaleString():'—'}</div><div class="cs-tl">Order Quantity (Pcs)</div></div>
+    </div>
+    <div style="margin-top:16px;display:flex;justify-content:flex-end">
+      <button class="btn btn-green" data-action="save_cs" data-edit="${editId||''}">💾 Save Cost Sheet</button>
+    </div>`;
+  } else if(art){
+    opsHtml=`<div class="empty-state" style="padding:22px"><div class="empty-text">No operation groups for this article. <span style="color:var(--accent);cursor:pointer" data-action="open_ops" data-id="${art.id}">→ Add groups</span></div></div>`;
   } else {
     opsHtml=`<div class="empty-state" style="padding:22px;color:var(--muted)"><div class="empty-icon" style="font-size:32px">◉</div><div class="empty-sub">Select an article above to load operations</div></div>`;
   }
 
-  return `<div class="page-header"><div><button class="btn btn-ghost btn-sm" data-nav="costsheets" style="margin-bottom:10px">← Cost Sheets</button><div class="page-title">${isEdit?'Edit':'New'} <span>Cost Sheet</span></div></div></div>
+  return `<div class="page-header"><div>
+    <button class="btn btn-ghost btn-sm" data-nav="costsheets" style="margin-bottom:10px">← Cost Sheets</button>
+    <div class="page-title">${isEdit?'Edit':'New'} <span>Cost Sheet</span></div>
+  </div></div>
   <div class="card"><div class="card-title">Sheet Details</div>
   <div class="fr fr4">
     <div class="form-group"><label>Sheet #</label><input id="f_sn" value="${esc(CSF.sheetNo||'')}"/></div>
     <div class="form-group"><label>Date</label><input type="date" id="f_dt" value="${esc(CSF.date||'')}"/></div>
-    <div class="form-group"><label>Garment Article</label><select id="f_art" data-action="cs_sel_art"><option value="">— Select —</option>${aArts.map(a=>`<option value="${a.id}" ${CSF.articleId===a.id?'selected':''}>${esc(a.code)} · ${esc(a.name)}</option>`).join('')}</select></div>
-    <div class="form-group"><label>Contractor</label><select id="f_con" data-action="cs_sel_con"><option value="">— None / Direct —</option>${aCons.map(c=>`<option value="${c.id}" ${CSF.contractorId===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div>
+    <div class="form-group"><label>Garment Article</label>
+      <select id="f_art" data-action="cs_sel_art"><option value="">— Select —</option>
+      ${aArts.map(a=>`<option value="${a.id}" ${CSF.articleId===a.id?'selected':''}>${esc(a.code)} · ${esc(a.name)}</option>`).join('')}
+      </select></div>
+    <div class="form-group"><label>Contractor</label>
+      <select id="f_con" data-action="cs_sel_con"><option value="">— None / Direct —</option>
+      ${aCons.map(c=>`<option value="${c.id}" ${CSF.contractorId===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}
+      </select></div>
   </div>
   <div class="fr fr4">
     <div class="form-group"><label>Description</label><input id="f_desc" value="${esc(CSF.description||'')}" placeholder="Order description"/></div>
@@ -374,51 +731,100 @@ function rNewCS(editId){
   </div>${opsHtml}</div>`;
 }
 
-// ═══════════════════════ VIEW CS ═══════════════════════
+// ═══════════════════════════════════════════════
+// VIEW COST SHEET
+// ═══════════════════════════════════════════════
 function rViewCS(id){
-  const cs=ST.costSheets.find(c=>c.id===id);if(!cs)return`<div style="padding:40px;color:var(--muted)">Not found</div>`;
-  const art=ST.articles.find(a=>a.id===cs.articleId);const con=ST.contractors.find(c=>c.id===cs.contractorId);
+  const cs=ST.costSheets.find(c=>c.id===id);
+  if(!cs) return `<div style="padding:40px;color:var(--muted)">Not found</div>`;
+  const art=ST.articles.find(a=>a.id===cs.article_id);
+  const con=ST.contractors.find(c=>c.id===cs.contractor_id);
   const tot=calcTot(cs);const qty=+cs.quantity||0;
-  return `<div class="page-header"><div><button class="btn btn-ghost btn-sm" data-nav="costsheets" style="margin-bottom:10px">← Cost Sheets</button><div class="page-title">Sheet <span>${esc(cs.sheetNo||'')}</span></div></div>
-  <div class="ag"><button class="btn btn-ghost btn-sm" data-action="edit_cs" data-id="${cs.id}">Edit</button><button class="btn btn-blue btn-sm" data-action="dl_xls" data-id="${cs.id}">📊 Excel</button><button class="btn btn-amber btn-sm" data-action="dl_pdf" data-id="${cs.id}">📄 PDF</button></div></div>
+  // group items
+  const groupedItems={};
+  (cs.items||[]).forEach(i=>{
+    const key=i.group_id||i.group_name;
+    if(!groupedItems[key]) groupedItems[key]={name:i.group_name,items:[]};
+    groupedItems[key].items.push(i);
+  });
+  return `<div class="page-header"><div>
+    <button class="btn btn-ghost btn-sm" data-nav="costsheets" style="margin-bottom:10px">← Cost Sheets</button>
+    <div class="page-title">Sheet <span>${esc(cs.sheet_no||'')}</span></div>
+  </div>
+  <div class="ag">
+    <button class="btn btn-ghost btn-sm" data-action="edit_cs" data-id="${cs.id}">Edit</button>
+    <button class="btn btn-blue btn-sm" data-action="dl_xls" data-id="${cs.id}">📊 Excel</button>
+    <button class="btn btn-amber btn-sm" data-action="dl_pdf" data-id="${cs.id}">📄 PDF</button>
+  </div></div>
   <div class="card">
-  <div class="info-bar"><div class="fr fr3">${[['Article',art?art.code+' · '+art.name:'?'],['Contractor',con?con.name:'—'],['Date',cs.date||'—'],['Buyer',cs.buyer||'—'],['Season',cs.season||'—'],['Order Qty',(+cs.quantity||0).toLocaleString()+' Pcs']].map(([l,val])=>`<div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px">${l}</div><div style="font-size:13px;font-weight:600">${esc(val)}</div></div>`).join('')}</div></div>
-  ${(cs.groups||[]).map(g=>`<div class="grp-header">${esc(g.name)}</div><div class="grp-table"><div class="tw"><table>
+  <div class="info-bar"><div class="fr fr3">
+    ${[['Article',art?art.code+' · '+art.name:'?'],['Contractor',con?con.name:'—'],['Date',cs.date||'—'],
+       ['Buyer',cs.buyer||'—'],['Season',cs.season||'—'],['Order Qty',(+cs.quantity||0).toLocaleString()+' Pcs']].map(([l,val])=>
+    `<div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px">${l}</div><div style="font-size:13px;font-weight:600">${esc(val)}</div></div>`).join('')}
+  </div></div>
+  ${Object.values(groupedItems).map(grp=>`
+  <div class="grp-header">${esc(grp.name)}</div>
+  <div class="grp-table"><div class="tw"><table>
     <thead><tr><th>#</th><th>Operation</th><th>Unit</th><th style="color:var(--green)">Approved (PKR)</th><th>Rate (PKR)</th><th>Qty (Pcs)</th><th>Amount (PKR)</th></tr></thead>
-    <tbody>${g.ops.map((op,i)=>{const amt=(+op.rate||0)*(+op.qty||0);return`<tr><td class="mono" style="color:var(--muted)">${String(i+1).padStart(2,'0')}</td><td><b>${esc(op.name)}</b></td><td><span class="chip">${esc(op.unit)}</span></td><td class="mono" style="color:var(--green)">${pkr(op.approvedRate||0)}</td><td class="mono">${pkr(op.rate||0)}</td><td class="mono">${(+op.qty||0).toLocaleString()}</td><td class="mono" style="color:var(--accent);font-weight:700">${pkr(amt)}</td></tr>`;}).join('')}
-    <tr class="grp-sub"><td colspan="6" style="text-align:right;padding-right:14px">Group Subtotal:</td><td class="mono" style="color:var(--accent)">${pkr(g.ops.reduce((s,o)=>s+(+o.rate||0)*(+o.qty||0),0))}</td></tr>
+    <tbody>${grp.items.map((item,i)=>{const amt=(+item.rate||0)*(+item.quantity||0);return`<tr>
+      <td class="mono" style="color:var(--muted)">${String(i+1).padStart(2,'0')}</td>
+      <td><b>${esc(item.operation_name)}</b></td><td><span class="chip">${esc(item.unit)}</span></td>
+      <td class="mono" style="color:var(--green)">${pkr(item.approved_rate||0)}</td>
+      <td class="mono">${pkr(item.rate||0)}</td><td class="mono">${(+item.quantity||0).toLocaleString()}</td>
+      <td class="mono" style="color:var(--accent);font-weight:700">${pkr(amt)}</td>
+    </tr>`;}).join('')}
+    <tr class="grp-sub"><td colspan="6" style="text-align:right;padding-right:14px">Group Subtotal:</td>
+    <td class="mono" style="color:var(--accent)">${pkr(grp.items.reduce((s,i)=>s+(+i.rate||0)*(+i.quantity||0),0))}</td></tr>
     </tbody></table></div></div>`).join('')}
-  <div class="cs-totals"><div class="cs-ti"><div class="cs-tv">${pkr(tot)}</div><div class="cs-tl">Total CMT Cost (PKR)</div></div><div class="cs-ti"><div class="cs-tv">${qty>0?pkr(tot/qty):'—'}</div><div class="cs-tl">Per Unit Cost (PKR)</div></div><div class="cs-ti"><div class="cs-tv">${qty.toLocaleString()}</div><div class="cs-tl">Order Quantity (Pcs)</div></div></div>
-  </div>`;
+  <div class="cs-totals">
+    <div class="cs-ti"><div class="cs-tv">${pkr(tot)}</div><div class="cs-tl">Total CMT Cost (PKR)</div></div>
+    <div class="cs-ti"><div class="cs-tv">${qty>0?pkr(tot/qty):'—'}</div><div class="cs-tl">Per Unit Cost (PKR)</div></div>
+    <div class="cs-ti"><div class="cs-tv">${qty.toLocaleString()}</div><div class="cs-tl">Order Quantity (Pcs)</div></div>
+  </div></div>`;
 }
 
-// ═══════════════════════ MODALS ═══════════════════════
+// ═══════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════
 function rModal(){
   const cl=`<button class="modal-close" data-action="close_modal">×</button>`;
-  const mf=(sa,sl)=>`<div class="modal-footer"><button class="btn btn-ghost" data-action="close_modal">Cancel</button><button class="btn btn-primary" data-action="${sa}">${sl}</button></div>`;
+  const mf=(sa,sl,extra='')=>`<div class="modal-footer">${extra}<button class="btn btn-ghost" data-action="close_modal">Cancel</button><button class="btn btn-primary" data-action="${sa}">${sl}</button></div>`;
 
-  if(MODAL==='add_art'||MODAL==='edit_art'){const e=MODAL==='edit_art';return`<div class="modal-overlay" data-action="close_modal"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><div class="modal-title">${e?'Edit':'Add'} Article</div>${cl}</div><div class="fr fr2"><div class="form-group"><label>Code *</label><input id="m_code" value="${esc(MD.code||'')}" placeholder="e.g. GV99"/></div><div class="form-group"><label>Name *</label><input id="m_name" value="${esc(MD.name||'')}" placeholder="Article name"/></div></div><div class="form-group"><label>Description</label><textarea id="m_desc">${esc(MD.desc||'')}</textarea></div>${mf('save_art',e?'Update':'Add Article')}</div></div>`;}
+  if(MODAL==='add_art'||MODAL==='edit_art'){const e=MODAL==='edit_art';return`<div class="modal-overlay" data-action="close_modal"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><div class="modal-title">${e?'Edit':'Add'} Article</div>${cl}</div><div class="fr fr2"><div class="form-group"><label>Code *</label><input id="m_code" value="${esc(MD.code||'')}"/></div><div class="form-group"><label>Name *</label><input id="m_name" value="${esc(MD.name||'')}"/></div></div><div class="form-group"><label>Description</label><textarea id="m_desc">${esc(MD.description||MD.desc||'')}</textarea></div>${mf('save_art',e?'Update Article':'Add Article')}</div></div>`;}
 
-  if(MODAL==='add_grp'||MODAL==='edit_grp'){const e=MODAL==='edit_grp';return`<div class="modal-overlay" data-action="close_modal"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><div class="modal-title">${e?'Rename':'Add'} Operation Group</div>${cl}</div><div class="form-group"><label>Group Name *</label><input id="m_grpname" value="${esc(MD.name||'')}" placeholder="e.g. Stitching"/></div>${mf('save_grp',e?'Update':'Add Group')}</div></div>`;}
+  if(MODAL==='add_grp'||MODAL==='edit_grp'){const e=MODAL==='edit_grp';return`<div class="modal-overlay" data-action="close_modal"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><div class="modal-title">${e?'Rename':'Add'} Group</div>${cl}</div><div class="form-group"><label>Group Name *</label><input id="m_grpname" value="${esc(MD.name||'')}" placeholder="e.g. Stitching"/></div>${mf('save_grp',e?'Update':'Add Group')}</div></div>`;}
 
-  if(MODAL==='add_op'||MODAL==='edit_op'){const e=MODAL==='edit_op';return`<div class="modal-overlay" data-action="close_modal"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><div class="modal-title">${e?'Edit':'Add'} Operation</div>${cl}</div><div style="background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.15);border-radius:7px;padding:8px 12px;font-size:12px;color:var(--accent);margin-bottom:14px">Group: <b>${esc(MD.grpName||'')}</b></div><div class="fr fr2"><div class="form-group"><label>Operation Name *</label><input id="m_opname" value="${esc(MD.name||'')}" placeholder="e.g. Body Stitching"/></div><div class="form-group"><label>Unit</label><input id="m_opunit" value="${esc(MD.unit||'Pcs')}"/></div></div><div class="fr fr2"><div class="form-group"><label>Approved Rate (PKR)</label><input id="m_oprate" type="number" value="${+MD.approvedRate||0}" min="0" step="0.01"/></div><div class="form-group"><label>Remarks</label><input id="m_opremarks" value="${esc(MD.remarks||'')}"/></div></div>${mf('save_op',e?'Update':'Add Operation')}</div></div>`;}
+  if(MODAL==='add_op'||MODAL==='edit_op'){const e=MODAL==='edit_op';return`<div class="modal-overlay" data-action="close_modal"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><div class="modal-title">${e?'Edit':'Add'} Operation</div>${cl}</div><div style="background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.15);border-radius:7px;padding:8px 12px;font-size:12px;color:var(--accent);margin-bottom:14px">Group: <b>${esc(MD.grpName||'')}</b></div><div class="fr fr2"><div class="form-group"><label>Operation Name *</label><input id="m_opname" value="${esc(MD.name||'')}"/></div><div class="form-group"><label>Unit</label><input id="m_opunit" value="${esc(MD.unit||'Pcs')}"/></div></div><div class="fr fr2"><div class="form-group"><label>Approved Rate (PKR)</label><input id="m_oprate" type="number" value="${+MD.approved_rate||+MD.approvedRate||0}" min="0" step="0.01"/></div><div class="form-group"><label>Remarks</label><input id="m_opremarks" value="${esc(MD.remarks||'')}"/></div></div>${mf('save_op',e?'Update':'Add Operation')}</div></div>`;}
 
-  if(MODAL==='add_con'||MODAL==='edit_con'){const e=MODAL==='edit_con';return`<div class="modal-overlay" data-action="close_modal"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><div class="modal-title">${e?'Edit':'Add'} Contractor</div>${cl}</div><div class="fr fr2"><div class="form-group"><label>Contractor Name *</label><input id="m_cname" value="${esc(MD.name||'')}" placeholder="e.g. Al-Hamza Stitching"/></div><div class="form-group"><label>Location / Floor</label><input id="m_cloc" value="${esc(MD.location||'')}" placeholder="e.g. Floor 2, Karachi"/></div></div><div class="fr fr2"><div class="form-group"><label>Contact Person</label><input id="m_ccont" value="${esc(MD.contact||'')}" placeholder="Name or phone"/></div><div class="form-group"><label>Remarks</label><input id="m_cremark" value="${esc(MD.remarks||'')}"/></div></div>${mf('save_con',e?'Update':'Add Contractor')}</div></div>`;}
+  if(MODAL==='add_con'||MODAL==='edit_con'){const e=MODAL==='edit_con';return`<div class="modal-overlay" data-action="close_modal"><div class="modal" onclick="event.stopPropagation()"><div class="modal-header"><div class="modal-title">${e?'Edit':'Add'} Contractor</div>${cl}</div><div class="fr fr2"><div class="form-group"><label>Name *</label><input id="m_cname" value="${esc(MD.name||'')}"/></div><div class="form-group"><label>Location / Floor</label><input id="m_cloc" value="${esc(MD.location||'')}" placeholder="e.g. Floor 2, Karachi"/></div></div><div class="fr fr2"><div class="form-group"><label>Contact Person</label><input id="m_ccont" value="${esc(MD.contact||'')}"/></div><div class="form-group"><label>Remarks</label><input id="m_cremark" value="${esc(MD.remarks||'')}"/></div></div>${mf('save_con',e?'Update':'Add Contractor')}</div></div>`;}
 
   if(MODAL==='rate_card'){
     const con=ST.contractors.find(c=>c.id===MD.conId);if(!con)return'';
     const aArts=ST.articles.filter(a=>a.active);
     const selId=MD.rcArt||(aArts[0]?aArts[0].id:'');
     const art=ST.articles.find(a=>a.id===selId);
-    return`<div class="modal-overlay" data-action="close_modal"><div class="modal modal-lg" onclick="event.stopPropagation()"><div class="modal-header"><div class="modal-title">Rate Card — ${esc(con.name)}</div>${cl}</div>
-    <div class="form-group"><label>Select Article</label><select data-action="rc_art_sel"><option value="">— Select —</option>${aArts.map(a=>`<option value="${a.id}" ${selId===a.id?'selected':''}>${esc(a.code)} · ${esc(a.name)}</option>`).join('')}</select></div>
-    ${art?`<div style="font-size:11px;color:var(--muted);margin-bottom:10px">Enter this contractor's rate per operation (PKR/Pc). Approved rate shown for reference.</div>
-    <div style="max-height:360px;overflow-y:auto">${art.groups.map(g=>`<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:1px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:8px">${esc(g.name)}</div>
-    ${g.ops.map(op=>{const rc=con.rateCards&&con.rateCards[art.id];const cur=rc&&rc[op.id]!==undefined?rc[op.id]:0;
-    return`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:12px"><div style="flex:1;font-size:13px">${esc(op.name)}<span class="chip" style="margin-left:6px">${esc(op.unit)}</span><span style="font-size:10.5px;color:var(--green);margin-left:6px">Approved: ${pkr(op.approvedRate||0)}</span></div><input type="number" class="rate-inp" id="rc_${op.id}" value="${cur}" min="0" step="0.01" style="width:130px"/></div>`;}).join('')}
-    </div>`).join('')}</div>
-    <div class="modal-footer"><button class="btn btn-ghost" data-action="close_modal">Cancel</button><button class="btn btn-primary" data-action="save_rc" data-conid="${con.id}" data-artid="${art.id}">Save Rate Card</button></div>`
-    :`<div style="text-align:center;padding:28px;color:var(--muted)">Select an article to enter rates</div><div class="modal-footer"><button class="btn btn-ghost" data-action="close_modal">Close</button></div>`}
+    const rcMap=MD.rcRates||{};
+    return`<div class="modal-overlay" data-action="close_modal"><div class="modal modal-lg" onclick="event.stopPropagation()">
+    <div class="modal-header"><div class="modal-title">Rate Card — ${esc(con.name)}</div>${cl}</div>
+    <div class="form-group"><label>Select Article</label>
+    <select data-action="rc_art_sel"><option value="">— Select —</option>
+    ${aArts.map(a=>`<option value="${a.id}" ${selId===a.id?'selected':''}>${esc(a.code)} · ${esc(a.name)}</option>`).join('')}
+    </select></div>
+    ${art?`<div style="font-size:11px;color:var(--muted);margin-bottom:10px">Enter rates per operation (PKR/Pc)</div>
+    <div style="max-height:360px;overflow-y:auto">
+    ${art.groups.map(g=>`<div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:1px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:8px">${esc(g.name)}</div>
+      ${g.ops.map(op=>`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:12px">
+        <div style="flex:1;font-size:13px">${esc(op.name)}<span class="chip" style="margin-left:6px">${esc(op.unit)}</span>
+        <span style="font-size:10.5px;color:var(--green);margin-left:6px">Approved: ${pkr(op.approved_rate||0)}</span></div>
+        <input type="number" class="rate-inp" id="rc_${op.id}" value="${rcMap[op.id]!==undefined?rcMap[op.id]:0}" min="0" step="0.01" style="width:130px"/>
+      </div>`).join('')}
+    </div>`).join('')}
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" data-action="close_modal">Cancel</button>
+    <button class="btn btn-primary" data-action="save_rc" data-conid="${con.id}" data-artid="${art.id}">Save Rate Card</button></div>`
+    :`<div style="text-align:center;padding:28px;color:var(--muted)">Select an article to enter rates</div>
+    <div class="modal-footer"><button class="btn btn-ghost" data-action="close_modal">Close</button></div>`}
     </div></div>`;
   }
 
@@ -426,98 +832,135 @@ function rModal(){
   return'';
 }
 
-// ═══════════════════════ BIND ═══════════════════════
+// ═══════════════════════════════════════════════
+// EVENT BINDING
+// ═══════════════════════════════════════════════
 function bind(){
-  document.querySelectorAll('[data-nav]').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();const t=el.dataset.nav;if(t==='newcs')CSF={};nav(t);}));
-  document.querySelectorAll('[data-action]').forEach(el=>el.addEventListener('click',e=>{
+  document.querySelectorAll('[data-nav]').forEach(el=>el.addEventListener('click',e=>{
+    e.stopPropagation();const t=el.dataset.nav;if(t==='newcs')CSF={};nav(t);
+  }));
+
+  document.querySelectorAll('[data-action]').forEach(el=>el.addEventListener('click',async e=>{
     e.stopPropagation();const a=el.dataset.action;
+
     if(a==='close_modal'){MODAL=null;render();return;}
-    if(a==='confirm_yes'){if(MD.cb)MD.cb();else{MODAL=null;render();}return;}
+    if(a==='confirm_yes'){if(MD.cb)await MD.cb();else{MODAL=null;render();}return;}
+
+    if(a==='refresh_all'){showLoad();await Promise.all([dbLoadArticles(),dbLoadContractors(),dbLoadCostSheets()]);hideLoad();render();toast('✓ Data refreshed');return;}
+
     // Articles
     if(a==='open_add_art'){MODAL='add_art';MD={};render();return;}
     if(a==='edit_art'){const art=ST.articles.find(x=>x.id===el.dataset.id);MODAL='edit_art';MD={...art};render();return;}
-    if(a==='toggle_art'){const art=ST.articles.find(x=>x.id===el.dataset.id);if(art){art.active=el.checked;saveST();toast(art.active?'✓ Activated':'Deactivated');}return;}
-    if(a==='del_art'){MODAL='confirm';MD={msg:'Delete this article and all its groups?',cb:()=>{ST.articles=ST.articles.filter(x=>x.id!==el.dataset.id);saveST();MODAL=null;toast('✓ Deleted');render();}};render();return;}
+    if(a==='toggle_art'){await dbToggleArticle(el.dataset.id,el.checked);render();return;}
+    if(a==='del_art'){MODAL='confirm';MD={msg:'Delete this article and all its groups?',cb:async()=>{showLoad();await dbDelArticle(el.dataset.id);hideLoad();MODAL=null;toast('✓ Deleted');render();}};render();return;}
     if(a==='save_art'){
       const code=vEl('m_code').trim(),name=vEl('m_name').trim(),desc=vEl('m_desc').trim();
-      if(!code||!name){toast('⚠ Code and Name required');return;}
-      if(MODAL==='edit_art'){const art=ST.articles.find(x=>x.id===MD.id);if(art){art.code=code;art.name=name;art.desc=desc;}}
-      else ST.articles.push({id:uid(),code,name,desc,active:true,groups:mkGroups()});
-      saveST();MODAL=null;toast('✓ Saved');render();return;
+      if(!code||!name){toast('⚠ Code and Name required',true);return;}
+      el.disabled=true;el.innerHTML='<span class="spinner"></span>Saving...';
+      const ok=await dbSaveArticle({id:MD.id,code,name,desc,active:true});
+      if(ok){MODAL=null;toast('✓ Article saved');}
+      render();return;
     }
     if(a==='open_ops'){EDIT_AID=el.dataset.id;nav('ops_editor');return;}
+
     // Groups
     if(a==='open_add_grp'){MODAL='add_grp';MD={artId:el.dataset.artid};render();return;}
     if(a==='edit_grp'){const art=ST.articles.find(x=>x.id===el.dataset.artid);const g=art?.groups.find(x=>x.id===el.dataset.gid);MODAL='edit_grp';MD={...g,artId:el.dataset.artid};render();return;}
-    if(a==='del_grp'){MODAL='confirm';MD={msg:'Delete this group and all operations in it?',cb:()=>{const art=ST.articles.find(x=>x.id===el.dataset.artid);if(art)art.groups=art.groups.filter(x=>x.id!==el.dataset.gid);saveST();MODAL=null;toast('✓ Deleted');render();}};render();return;}
+    if(a==='del_grp'){MODAL='confirm';MD={msg:'Delete this group and all operations?',cb:async()=>{showLoad();await dbDelGroup(el.dataset.gid);hideLoad();MODAL=null;toast('✓ Deleted');render();}};render();return;}
     if(a==='save_grp'){
-      const name=vEl('m_grpname').trim();if(!name){toast('⚠ Name required');return;}
-      const art=ST.articles.find(x=>x.id===MD.artId);if(!art)return;
-      if(MODAL==='edit_grp'){const g=art.groups.find(x=>x.id===MD.id);if(g)g.name=name;}
-      else art.groups.push({id:uid(),name,ops:[]});
-      saveST();MODAL=null;toast('✓ Saved');render();return;
+      const name=vEl('m_grpname').trim();if(!name){toast('⚠ Name required',true);return;}
+      el.disabled=true;el.innerHTML='<span class="spinner"></span>Saving...';
+      const ok=await dbSaveGroup(MD.artId,{id:MD.id,name});
+      if(ok){MODAL=null;toast('✓ Group saved');}render();return;
     }
+
     // Ops
     if(a==='open_add_op'){const art=ST.articles.find(x=>x.id===el.dataset.artid);const g=art?.groups.find(x=>x.id===el.dataset.gid);MODAL='add_op';MD={artId:el.dataset.artid,gId:el.dataset.gid,grpName:g?g.name:''};render();return;}
     if(a==='edit_op'){const art=ST.articles.find(x=>x.id===el.dataset.artid);const g=art?.groups.find(x=>x.id===el.dataset.gid);const op=g?.ops.find(x=>x.id===el.dataset.opid);MODAL='edit_op';MD={...op,artId:el.dataset.artid,gId:el.dataset.gid,grpName:g?g.name:''};render();return;}
-    if(a==='del_op'){MODAL='confirm';MD={msg:'Delete this operation?',cb:()=>{const art=ST.articles.find(x=>x.id===el.dataset.artid);const g=art?.groups.find(x=>x.id===el.dataset.gid);if(g)g.ops=g.ops.filter(x=>x.id!==el.dataset.opid);saveST();MODAL=null;toast('✓ Deleted');render();}};render();return;}
+    if(a==='del_op'){MODAL='confirm';MD={msg:'Delete this operation?',cb:async()=>{showLoad();await dbDelOp(el.dataset.opid);hideLoad();MODAL=null;toast('✓ Deleted');render();}};render();return;}
     if(a==='save_op'){
       const name=vEl('m_opname').trim(),unit=vEl('m_opunit').trim()||'Pcs';
       const rate=parseFloat(vEl('m_oprate'))||0,remarks=vEl('m_opremarks').trim();
-      if(!name){toast('⚠ Name required');return;}
-      const art=ST.articles.find(x=>x.id===MD.artId);const g=art?.groups.find(x=>x.id===MD.gId);if(!g)return;
-      if(MODAL==='edit_op'){const op=g.ops.find(x=>x.id===MD.id);if(op){op.name=name;op.unit=unit;op.approvedRate=rate;op.remarks=remarks;}}
-      else g.ops.push({id:uid(),name,unit,approvedRate:rate,remarks});
-      saveST();MODAL=null;toast('✓ Saved');render();return;
+      if(!name){toast('⚠ Name required',true);return;}
+      el.disabled=true;el.innerHTML='<span class="spinner"></span>Saving...';
+      const ok=await dbSaveOp(MD.artId,MD.gId,{id:MD.id,name,unit,approvedRate:rate,remarks});
+      if(ok){MODAL=null;toast('✓ Operation saved');}render();return;
     }
+
     // Contractors
     if(a==='open_add_con'){MODAL='add_con';MD={};render();return;}
     if(a==='edit_con'){const c=ST.contractors.find(x=>x.id===el.dataset.id);MODAL='edit_con';MD={...c};render();return;}
-    if(a==='toggle_con'){const c=ST.contractors.find(x=>x.id===el.dataset.id);if(c){c.active=el.checked;saveST();toast(c.active?'✓ Active':'Deactivated');}return;}
-    if(a==='del_con'){MODAL='confirm';MD={msg:'Delete this contractor and all rate cards?',cb:()=>{ST.contractors=ST.contractors.filter(x=>x.id!==el.dataset.id);saveST();MODAL=null;toast('✓ Deleted');render();}};render();return;}
+    if(a==='toggle_con'){await dbToggleCon(el.dataset.id,el.checked);render();return;}
+    if(a==='del_con'){MODAL='confirm';MD={msg:'Delete this contractor and all rate cards?',cb:async()=>{showLoad();await dbDelCon(el.dataset.id);hideLoad();MODAL=null;toast('✓ Deleted');render();}};render();return;}
     if(a==='save_con'){
-      const name=vEl('m_cname').trim();if(!name){toast('⚠ Name required');return;}
-      const loc=vEl('m_cloc').trim(),cont=vEl('m_ccont').trim(),rem=vEl('m_cremark').trim();
-      if(MODAL==='edit_con'){const c=ST.contractors.find(x=>x.id===MD.id);if(c){c.name=name;c.location=loc;c.contact=cont;c.remarks=rem;}}
-      else ST.contractors.push({id:uid(),name,location:loc,contact:cont,remarks:rem,active:true,rateCards:{}});
-      saveST();MODAL=null;toast('✓ Saved');render();return;
+      const name=vEl('m_cname').trim();if(!name){toast('⚠ Name required',true);return;}
+      el.disabled=true;el.innerHTML='<span class="spinner"></span>Saving...';
+      const ok=await dbSaveCon({id:MD.id,name,location:vEl('m_cloc'),contact:vEl('m_ccont'),remarks:vEl('m_cremark')});
+      if(ok){MODAL=null;toast('✓ Saved');}render();return;
     }
-    if(a==='open_rc'){MODAL='rate_card';MD={conId:el.dataset.id,rcArt:''};render();return;}
-    if(a==='rc_art_sel'){MD.rcArt=el.value;render();return;}
+    if(a==='open_rc'){
+      showLoad();
+      const con=ST.contractors.find(c=>c.id===el.dataset.id);
+      const aArts=ST.articles.filter(a=>a.active);
+      const firstArt=aArts[0];
+      let rcRates={};
+      if(firstArt) rcRates=await dbLoadRateCards(el.dataset.id,firstArt.id);
+      hideLoad();
+      MODAL='rate_card';MD={conId:el.dataset.id,rcArt:firstArt?firstArt.id:'',rcRates};render();return;
+    }
+    if(a==='rc_art_sel'){
+      showLoad();
+      const rates=await dbLoadRateCards(MD.conId,el.value);
+      hideLoad();
+      MD.rcArt=el.value;MD.rcRates=rates;render();return;
+    }
     if(a==='save_rc'){
-      const con=ST.contractors.find(x=>x.id===el.dataset.conid);const art=ST.articles.find(x=>x.id===el.dataset.artid);
-      if(!con||!art)return;if(!con.rateCards)con.rateCards={};con.rateCards[art.id]={};
-      art.groups.forEach(g=>g.ops.forEach(op=>{const i=document.getElementById('rc_'+op.id);if(i)con.rateCards[art.id][op.id]=parseFloat(i.value)||0;}));
-      saveST();MODAL=null;toast('✓ Rate card saved');render();return;
+      const art=ST.articles.find(x=>x.id===el.dataset.artid);if(!art)return;
+      const rates={};
+      art.groups.forEach(g=>g.ops.forEach(op=>{const i=document.getElementById('rc_'+op.id);if(i)rates[op.id]=parseFloat(i.value)||0;}));
+      el.disabled=true;el.innerHTML='<span class="spinner"></span>Saving...';
+      const ok=await dbSaveRateCard(el.dataset.conid,el.dataset.artid,rates);
+      if(ok){MODAL=null;toast('✓ Rate card saved');}render();return;
     }
-    if(a==='rc_sel_art'){MD.rcArtId=el.value;render();return;}
-    // Cost Sheets
+    if(a==='rc_sel_art'){
+      showLoad();
+      const aArts=ST.articles.filter(a=>a.active);
+      const selCons=ST.contractors.filter(c=>c.active);
+      const rcMap={};
+      for(const c of selCons){rcMap[c.id]=await dbLoadRateCards(c.id,el.value);}
+      hideLoad();
+      MD.rcArtId=el.value;MD.rcMap=rcMap;render();return;
+    }
+
+    // Cost Sheet
     if(a==='cs_sel_art'||a==='cs_sel_con'){
       collectCSF();
-      if(a==='cs_sel_art')CSF.articleId=el.value;
-      if(a==='cs_sel_con')CSF.contractorId=el.value;
-      if(CSF.articleId) loadCSFGroups();
+      if(a==='cs_sel_art') CSF.articleId=el.value;
+      if(a==='cs_sel_con') CSF.contractorId=el.value;
+      if(CSF.articleId){await loadCSFGroups();}
       render();return;
     }
     if(a==='cs_qty'){collectCSF();CSF.quantity=+el.value||0;if(CSF.groups)CSF.groups.forEach(g=>g.ops.forEach(o=>{if(!o._mq)o.qty=CSF.quantity;}));render();return;}
     if(a==='save_cs'){
       collectCSF();
-      if(!CSF.articleId){toast('⚠ Select an article');return;}
-      if(!CSF.groups||!CSF.groups.length){toast('⚠ No operation groups found');return;}
+      if(!CSF.articleId){toast('⚠ Select an article',true);return;}
+      if(!CSF.groups||!CSF.groups.length){toast('⚠ No operation groups',true);return;}
+      el.disabled=true;el.innerHTML='<span class="spinner"></span>Saving...';
       const eId=el.dataset.edit;
-      if(eId){const i=ST.costSheets.findIndex(c=>c.id===eId);if(i>-1)ST.costSheets[i]={...CSF,id:eId};toast('✓ Updated');}
-      else{ST.costSheets.push({...CSF,id:uid(),sheetNo:CSF.sheetNo||autoSN()});toast('✓ Saved');}
-      saveST();CSF={};nav('costsheets');return;
+      const ok=await dbSaveCS(CSF,eId||null);
+      if(ok){toast(eId?'✓ Updated':'✓ Saved');CSF={};nav('costsheets');}
+      else render();return;
     }
     if(a==='view_cs'){nav('viewcs-'+el.dataset.id);return;}
-    if(a==='edit_cs'){const cs=ST.costSheets.find(c=>c.id===el.dataset.id);if(cs){CSF={...JSON.parse(JSON.stringify(cs)),_id:el.dataset.id};}nav('editcs-'+el.dataset.id);return;}
-    if(a==='dup_cs'){const cs=ST.costSheets.find(c=>c.id===el.dataset.id);if(cs){ST.costSheets.push({...JSON.parse(JSON.stringify(cs)),id:uid(),sheetNo:autoSN()});saveST();toast('✓ Duplicated');render();}return;}
-    if(a==='del_cs'){MODAL='confirm';MD={msg:'Delete this cost sheet permanently?',cb:()=>{ST.costSheets=ST.costSheets.filter(c=>c.id!==el.dataset.id);saveST();MODAL=null;toast('✓ Deleted');render();}};render();return;}
+    if(a==='edit_cs'){CSF={_id:el.dataset.id};nav('editcs-'+el.dataset.id);return;}
+    if(a==='del_cs'){MODAL='confirm';MD={msg:'Delete this cost sheet permanently?',cb:async()=>{showLoad();await dbDelCS(el.dataset.id);hideLoad();MODAL=null;toast('✓ Deleted');render();}};render();return;}
     if(a==='dl_xls'){const cs=ST.costSheets.find(c=>c.id===el.dataset.id);if(cs)xlsExport(cs);return;}
     if(a==='dl_pdf'){const cs=ST.costSheets.find(c=>c.id===el.dataset.id);if(cs)pdfExport(cs);return;}
     if(a==='dl_xls_form'){collectCSF();xlsExport(CSF);return;}
     if(a==='dl_pdf_form'){collectCSF();pdfExport(CSF);return;}
+    if(a==='open_ops'){EDIT_AID=el.dataset.id;nav('ops_editor');return;}
   }));
+
   // Live inputs
   document.querySelectorAll('[data-csop-rate]').forEach(inp=>inp.addEventListener('input',()=>{
     const g=CSF.groups?.find(x=>x.id===inp.dataset.gid);const op=g?.ops.find(x=>x.id===inp.dataset.csopRate);
@@ -530,7 +973,8 @@ function bind(){
 }
 
 function refreshLive(){
-  const tot=calcTot(CSF);const qty=+CSF.quantity||0;
+  const tot=CSF.groups?CSF.groups.reduce((t,g)=>t+g.ops.reduce((s,o)=>s+(+o.rate||0)*(+o.qty||0),0),0):0;
+  const qty=+CSF.quantity||0;
   CSF.groups&&CSF.groups.forEach(g=>{let sub=0;g.ops.forEach(op=>{const amt=(+op.rate||0)*(+op.qty||0);sub+=amt;const e=document.getElementById('amt_'+op.id);if(e)e.textContent=pkr(amt);});const se=document.getElementById('sub_'+g.id);if(se)se.textContent=pkr(sub);});
   const te=document.getElementById('cs_tot');if(te)te.textContent=pkr(tot);
   const pe=document.getElementById('cs_pu');if(pe)pe.textContent=qty>0?pkr(tot/qty):'—';
@@ -538,42 +982,67 @@ function refreshLive(){
 
 function collectCSF(){
   const g=id=>document.getElementById(id);
-  if(g('f_sn'))CSF.sheetNo=g('f_sn').value;if(g('f_dt'))CSF.date=g('f_dt').value;
-  if(g('f_art'))CSF.articleId=g('f_art').value;if(g('f_con'))CSF.contractorId=g('f_con').value;
-  if(g('f_desc'))CSF.description=g('f_desc').value;if(g('f_buyer'))CSF.buyer=g('f_buyer').value;
-  if(g('f_season'))CSF.season=g('f_season').value;if(g('f_qty'))CSF.quantity=+g('f_qty').value||0;
+  if(g('f_sn'))CSF.sheetNo=g('f_sn').value;
+  if(g('f_dt'))CSF.date=g('f_dt').value;
+  if(g('f_art'))CSF.articleId=g('f_art').value;
+  if(g('f_con'))CSF.contractorId=g('f_con').value;
+  if(g('f_desc'))CSF.description=g('f_desc').value;
+  if(g('f_buyer'))CSF.buyer=g('f_buyer').value;
+  if(g('f_season'))CSF.season=g('f_season').value;
+  if(g('f_qty'))CSF.quantity=+g('f_qty').value||0;
   if(CSF.groups)CSF.groups.forEach(grp=>grp.ops.forEach(op=>{
-    const ri=document.querySelector(`[data-csop-rate="${op.id}"]`);const qi=document.querySelector(`[data-csop-qty="${op.id}"]`);
-    if(ri)op.rate=parseFloat(ri.value)||0;if(qi)op.qty=parseFloat(qi.value)||0;
+    const ri=document.querySelector(`[data-csop-rate="${op.id}"]`);
+    const qi=document.querySelector(`[data-csop-qty="${op.id}"]`);
+    if(ri)op.rate=parseFloat(ri.value)||0;
+    if(qi)op.qty=parseFloat(qi.value)||0;
   }));
 }
 
-function loadCSFGroups(){
-  const art=ST.articles.find(a=>a.id===CSF.articleId);const con=ST.contractors.find(c=>c.id===CSF.contractorId);
-  if(!art)return;const qty=+CSF.quantity||0;
-  CSF.groups=art.groups.map(g=>({id:g.id,name:g.name,ops:g.ops.map(op=>{
-    const rate=con&&con.rateCards&&con.rateCards[art.id]?con.rateCards[art.id][op.id]||0:0;
-    return{id:op.id,name:op.name,unit:op.unit,approvedRate:op.approvedRate||0,rate,qty,remarks:op.remarks||''};
-  })}));
+async function loadCSFGroups(){
+  const art=ST.articles.find(a=>a.id===CSF.articleId);if(!art)return;
+  const qty=+CSF.quantity||0;
+  let rcRates={};
+  if(CSF.contractorId) rcRates=await dbLoadRateCards(CSF.contractorId,CSF.articleId);
+  CSF.groups=art.groups.map(g=>({
+    id:g.id,name:g.name,
+    ops:g.ops.map(op=>({
+      id:op.id,name:op.name,unit:op.unit,
+      approvedRate:op.approved_rate||0,
+      rate:rcRates[op.id]||0,
+      qty
+    }))
+  }));
 }
 
-function nav(v){VIEW=v;render();window.scrollTo(0,0);}
-function toast(msg){TOAST=msg;if(TTM)clearTimeout(TTM);const e=document.querySelector('.toast');if(e)e.textContent=msg;else render();TTM=setTimeout(()=>{TOAST=null;const t=document.querySelector('.toast');if(t)t.remove();},2600);}
+// ═══════════════════════════════════════════════
+// EXPORTS
+// ═══════════════════════════════════════════════
+function getExportGroups(cs){
+  if(cs.groups) return cs.groups; // from form state
+  const grouped={};
+  (cs.items||[]).forEach(i=>{const k=i.group_name;if(!grouped[k])grouped[k]={name:k,ops:[]};grouped[k].ops.push({name:i.operation_name,unit:i.unit,approvedRate:i.approved_rate||0,rate:i.rate||0,qty:i.quantity||0});});
+  return Object.values(grouped);
+}
 
-// ═══════════════════════ EXCEL EXPORT ═══════════════════════
 function xlsExport(cs){
-  const art=ST.articles.find(a=>a.id===cs.articleId);const con=ST.contractors.find(c=>c.id===cs.contractorId);
-  const tot=calcTot(cs);const qty=+cs.quantity||0;
+  const art=ST.articles.find(a=>a.id===(cs.article_id||cs.articleId));
+  const con=ST.contractors.find(c=>c.id===(cs.contractor_id||cs.contractorId));
+  const groups=getExportGroups(cs);
+  const tot=groups.reduce((t,g)=>t+(g.ops||[]).reduce((s,o)=>s+(+o.rate||0)*(+o.qty||+o.quantity||0),0),0);
+  const qty=+cs.quantity||0;
   const wb=XLSX.utils.book_new();
-  const rows=[['CMT PRE-ORDER COST SHEET — NFP NazeerFinPro · PKR'],[''],
-    ['Sheet #:',cs.sheetNo||'Draft','Date:',cs.date||''],
+  const rows=[
+    ['CMT PRE-ORDER COST SHEET — NFP NazeerFinPro · PKR'],[''],
+    ['Sheet #:',cs.sheet_no||cs.sheetNo||'Draft','Date:',cs.date||''],
     ['Article:',art?art.code+' · '+art.name:'?','Contractor:',con?con.name:'—'],
     ['Description:',cs.description||'','Buyer:',cs.buyer||''],
     ['Season:',cs.season||'','Order Qty (Pcs):',qty],[''],
-    ['GROUP','#','OPERATION','UNIT','APPROVED RATE','RATE (PKR)','QTY (PCS)','AMOUNT (PKR)']];
-  (cs.groups||[]).forEach(g=>{
-    g.ops.forEach((op,i)=>rows.push([i===0?g.name:'',i+1,op.name,op.unit,+op.approvedRate||0,+op.rate||0,+op.qty||0,(+op.rate||0)*(+op.qty||0)]));
-    rows.push(['','','','','','Group Subtotal:','',g.ops.reduce((s,o)=>s+(+o.rate||0)*(+o.qty||0),0)]);rows.push(['']);
+    ['GROUP','#','OPERATION','UNIT','APPROVED RATE','RATE (PKR)','QTY (PCS)','AMOUNT (PKR)']
+  ];
+  groups.forEach(g=>{
+    (g.ops||[]).forEach((op,i)=>{const q=+op.qty||+op.quantity||0;rows.push([i===0?g.name:'',i+1,op.name,op.unit,+op.approvedRate||+op.approved_rate||0,+op.rate||0,q,(+op.rate||0)*q]);});
+    const sub=(g.ops||[]).reduce((s,o)=>s+(+o.rate||0)*(+o.qty||+o.quantity||0),0);
+    rows.push(['','','','','','Group Subtotal:','',sub]);rows.push(['']);
   });
   rows.push(['','','','','','TOTAL CMT COST (PKR):','',tot]);
   rows.push(['','','','','','PER UNIT COST (PKR):','',qty>0?tot/qty:0]);
@@ -582,41 +1051,34 @@ function xlsExport(cs){
   const ws=XLSX.utils.aoa_to_sheet(rows);
   ws['!cols']=[{wch:18},{wch:4},{wch:24},{wch:8},{wch:16},{wch:16},{wch:12},{wch:18}];
   XLSX.utils.book_append_sheet(wb,ws,'Cost Sheet');
-  XLSX.writeFile(wb,`CMT_${cs.sheetNo||'Draft'}_${(cs.date||'').replace(/-/g,'')}.xlsx`);
+  XLSX.writeFile(wb,`CMT_${cs.sheet_no||cs.sheetNo||'Draft'}.xlsx`);
   toast('✓ Excel downloaded');
 }
 
-// ═══════════════════════ PDF EXPORT ═══════════════════════
 function pdfExport(cs){
-  const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const art=ST.articles.find(a=>a.id===cs.articleId);const con=ST.contractors.find(c=>c.id===cs.contractorId);
-  const tot=calcTot(cs);const qty=+cs.quantity||0;
-  // Header
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const art=ST.articles.find(a=>a.id===(cs.article_id||cs.articleId));
+  const con=ST.contractors.find(c=>c.id===(cs.contractor_id||cs.contractorId));
+  const groups=getExportGroups(cs);
+  const tot=groups.reduce((t,g)=>t+(g.ops||[]).reduce((s,o)=>s+(+o.rate||0)*(+o.qty||+o.quantity||0),0),0);
+  const qty=+cs.quantity||0;
   doc.setFillColor(13,15,20);doc.rect(0,0,210,32,'F');
   doc.setTextColor(245,166,35);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('CMT PRE-ORDER COST SHEET',14,11);
   doc.setFontSize(8);doc.setTextColor(122,128,153);doc.setFont('helvetica','normal');doc.text('NFP \u00b7 NazeerFinPro  |  Cut \u00b7 Make \u00b7 Trim Costing  |  PKR',14,18);
-  doc.setFontSize(9);doc.setTextColor(238,240,246);doc.setFont('helvetica','bold');doc.text('Sheet: '+(cs.sheetNo||'Draft'),14,26);doc.text('Date: '+(cs.date||'N/A'),80,26);doc.setFont('helvetica','normal');
-  // Info
+  doc.setFontSize(9);doc.setTextColor(238,240,246);doc.setFont('helvetica','bold');
+  doc.text('Sheet: '+(cs.sheet_no||cs.sheetNo||'Draft'),14,26);doc.text('Date: '+(cs.date||'N/A'),80,26);doc.setFont('helvetica','normal');
   doc.setFillColor(22,25,32);doc.rect(0,32,210,28,'F');
   const info=[['ARTICLE',art?art.code+' \u00b7 '+art.name:'?','CONTRACTOR',con?con.name:'\u2014'],['BUYER',cs.buyer||'\u2014','SEASON',cs.season||'\u2014'],['DESCRIPTION',cs.description||'\u2014','ORDER QTY',qty.toLocaleString()+' Pcs']];
   info.forEach((row,ri)=>{const y=39+(ri*8);[[14,row[0],row[1]],[110,row[2],row[3]]].forEach(([x,lbl,val])=>{doc.setFontSize(7);doc.setTextColor(122,128,153);doc.text(lbl,x,y);doc.setFontSize(8);doc.setTextColor(238,240,246);doc.setFont('helvetica','bold');doc.text(String(val),x,y+4.5);doc.setFont('helvetica','normal');});});
-  // Tables
   let sY=64;
-  (cs.groups||[]).forEach(g=>{
-    const body=g.ops.map((op,i)=>[String(i+1).padStart(2,'0'),op.name,op.unit,'PKR '+(+op.approvedRate||0).toLocaleString('en',{minimumFractionDigits:2}),'PKR '+(+op.rate||0).toLocaleString('en',{minimumFractionDigits:2}),(+op.qty||0).toLocaleString(),'PKR '+((+op.rate||0)*(+op.qty||0)).toLocaleString('en',{minimumFractionDigits:2})]);
-    const sub=g.ops.reduce((s,o)=>s+(+o.rate||0)*(+o.qty||0),0);
+  groups.forEach(g=>{
+    const body=(g.ops||[]).map((op,i)=>{const q=+op.qty||+op.quantity||0;return[String(i+1).padStart(2,'0'),op.name,op.unit,'PKR '+(+op.approvedRate||+op.approved_rate||0).toLocaleString('en',{minimumFractionDigits:2}),'PKR '+(+op.rate||0).toLocaleString('en',{minimumFractionDigits:2}),q.toLocaleString(),'PKR '+((+op.rate||0)*q).toLocaleString('en',{minimumFractionDigits:2})];});
+    const sub=(g.ops||[]).reduce((s,o)=>s+(+o.rate||0)*(+o.qty||+o.quantity||0),0);
     body.push(['','','','','Subtotal:','','PKR '+sub.toLocaleString('en',{minimumFractionDigits:2})]);
-    doc.autoTable({startY:sY,
-      head:[[{content:g.name,colSpan:7,styles:{fillColor:[30,34,48],textColor:[245,166,35],fontStyle:'bold',fontSize:8.5}}],['#','Operation','Unit','Approved','Rate (PKR)','Qty','Amount (PKR)']],
-      body,styles:{fontSize:8.5,cellPadding:2.5,textColor:[220,224,234],fillColor:[22,25,32],lineColor:[42,47,62],lineWidth:0.1},
-      headStyles:{fillColor:[30,34,48],textColor:[122,128,153],fontStyle:'bold',fontSize:7.5},
-      alternateRowStyles:{fillColor:[18,21,28]},
-      columnStyles:{0:{cellWidth:8},2:{cellWidth:11},3:{cellWidth:24},4:{cellWidth:24},5:{cellWidth:16},6:{cellWidth:28}},
-      didParseCell:(d)=>{if(d.row.index===body.length-1){d.cell.styles.textColor=[245,166,35];d.cell.styles.fontStyle='bold';}},
-      margin:{left:12,right:12}});
+    doc.autoTable({startY:sY,head:[[{content:g.name,colSpan:7,styles:{fillColor:[30,34,48],textColor:[245,166,35],fontStyle:'bold',fontSize:8.5}}],['#','Operation','Unit','Approved','Rate (PKR)','Qty','Amount (PKR)']],body,styles:{fontSize:8.5,cellPadding:2.5,textColor:[220,224,234],fillColor:[22,25,32],lineColor:[42,47,62],lineWidth:0.1},headStyles:{fillColor:[30,34,48],textColor:[122,128,153],fontStyle:'bold',fontSize:7.5},alternateRowStyles:{fillColor:[18,21,28]},columnStyles:{0:{cellWidth:8},2:{cellWidth:11},3:{cellWidth:24},4:{cellWidth:24},5:{cellWidth:16},6:{cellWidth:28}},didParseCell:(d)=>{if(d.row.index===body.length-1){d.cell.styles.textColor=[245,166,35];d.cell.styles.fontStyle='bold';}},margin:{left:12,right:12}});
     sY=doc.lastAutoTable.finalY+3;
   });
-  // Totals box
   const fy=sY+3;doc.setFillColor(30,34,48);doc.rect(12,fy,186,24,'F');doc.setDrawColor(245,166,35);doc.setLineWidth(0.35);doc.rect(12,fy,186,24,'S');
   doc.setDrawColor(42,47,62);doc.setLineWidth(0.15);doc.line(76,fy,76,fy+24);doc.line(140,fy,140,fy+24);
   doc.setFontSize(7);doc.setTextColor(122,128,153);doc.text('TOTAL CMT COST',18,fy+7);doc.text('PER UNIT COST',82,fy+7);doc.text('ORDER QTY (PCS)',146,fy+7);
@@ -625,10 +1087,22 @@ function pdfExport(cs){
   doc.text(qty>0?'PKR '+(tot/qty).toLocaleString('en',{minimumFractionDigits:2}):'\u2014',82,fy+18);
   doc.setTextColor(238,240,246);doc.text(qty.toLocaleString(),146,fy+18);doc.setFont('helvetica','normal');
   doc.setFontSize(6.5);doc.setTextColor(55,60,75);doc.text('CMT Pre-Order Costing v2.0 \u00b7 NFP NazeerFinPro \u00b7 Karachi',12,292);
-  doc.save(`CMT_${cs.sheetNo||'Draft'}.pdf`);toast('✓ PDF downloaded');
+  doc.save(`CMT_${cs.sheet_no||cs.sheetNo||'Draft'}.pdf`);
+  toast('✓ PDF downloaded');
 }
 
-render();
+// ═══════════════════════════════════════════════
+// BOOT — show loading screen then init
+// ═══════════════════════════════════════════════
+document.getElementById('app').innerHTML=`
+  <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;background:var(--bg)">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent)">CMT COSTING</div>
+    <div style="font-size:13px;color:var(--muted)">Connecting to Supabase...</div>
+    <div style="width:200px;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden">
+      <div style="height:100%;background:var(--accent);animation:loadpulse 1.2s ease-in-out infinite"></div>
+    </div>
+  </div>`;
+initLoad();
 </script>
 </body>
 </html>
