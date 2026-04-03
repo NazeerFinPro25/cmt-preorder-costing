@@ -558,55 +558,125 @@ function rContractors(){
 // ═══════════════════════════════════════════════
 function rRateComp(){
   const aArts=ST.articles.filter(a=>a.active);
-  const aCons=ST.contractors.filter(c=>c.active);
+  const allCons=ST.contractors.filter(c=>c.active);
   const selId=MD.rcArtId||(aArts[0]?aArts[0].id:'');
   const art=ST.articles.find(a=>a.id===selId);
-  // build rate map from cost_sheet_items is not ideal; use rate_cards via MD cache
   const rcMap=MD.rcMap||{};
+
+  // Initialise selection: default = all ticked
+  if(!MD.rcSelCons||MD.rcSelCons.length===0)
+    MD.rcSelCons=allCons.map(c=>c.id);
+  // Visible contractors = ticked AND active
+  const visCons=allCons.filter(c=>MD.rcSelCons.includes(c.id));
+
+  // ── Contractor selector panel ──
+  const selPanel=allCons.length?`
+  <div style="margin-bottom:0">
+    <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+      <span>Contractors to Compare</span>
+      <span style="font-weight:500;color:var(--accent);cursor:pointer;font-size:11px;text-transform:none;letter-spacing:0" onclick="rcToggleAllCons(true)">☑ Select All</span>
+      <span style="color:var(--border)">|</span>
+      <span style="font-weight:500;color:var(--muted);cursor:pointer;font-size:11px;text-transform:none;letter-spacing:0" onclick="rcToggleAllCons(false)">☐ Clear All</span>
+      <span class="badge badge-blue" style="margin-left:4px">${visCons.length}/${allCons.length} selected</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px">
+      ${allCons.map(c=>{
+        const checked=MD.rcSelCons.includes(c.id);
+        return `<label style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid ${checked?'rgba(245,166,35,.4)':'var(--border)'};background:${checked?'rgba(245,166,35,.08)':'var(--surface2)'};cursor:pointer;font-size:12px;font-weight:${checked?'600':'400'};color:${checked?'var(--accent)':'var(--muted)'};transition:all .14s;user-select:none">
+          <input type="checkbox" ${checked?'checked':''} onchange="rcToggleCon('${c.id}',this.checked)" style="accent-color:var(--accent);width:13px;height:13px;cursor:pointer"/>
+          ${esc(c.name)}
+        </label>`;
+      }).join('')}
+    </div>
+    ${visCons.length===0?`<div style="margin-top:10px;font-size:12px;color:var(--red)">⚠ Tick at least one contractor to view the comparison.</div>`:''}
+  </div>`:'' ;
+
   return `<div class="page-header"><div><div class="page-title">Rate <span>Comparison</span></div><div class="page-sub">Contractor rates vs approved rate per operation</div></div></div>
-  <div class="card" style="margin-bottom:16px"><div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap">
-    <div class="form-group" style="margin-bottom:0;min-width:260px"><label>Select Article</label>
-    <select data-action="rc_sel_art"><option value="">— Select —</option>
-    ${aArts.map(a=>`<option value="${a.id}" ${selId===a.id?'selected':''}>${esc(a.code)} · ${esc(a.name)}</option>`).join('')}
-    </select></div>
-    ${art&&aCons.length?`<div class="ag" style="padding-bottom:1px">
-      <button class="btn btn-blue btn-sm" onclick="rcXlsExport()">📊 Excel</button>
-      <button class="btn btn-amber btn-sm" onclick="rcPdfExport()">📄 PDF</button>
-    </div>`:''}
-  </div></div>
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:${allCons.length?'18px':'0'}">
+      <div class="form-group" style="margin-bottom:0;min-width:260px"><label>Select Article</label>
+      <select data-action="rc_sel_art"><option value="">— Select —</option>
+      ${aArts.map(a=>`<option value="${a.id}" ${selId===a.id?'selected':''}>${esc(a.code)} · ${esc(a.name)}</option>`).join('')}
+      </select></div>
+      ${art&&visCons.length?`<div class="ag" style="padding-bottom:1px">
+        <button class="btn btn-blue btn-sm" onclick="rcXlsExport()">📊 Excel</button>
+        <button class="btn btn-amber btn-sm" onclick="rcPdfExport()">📄 PDF</button>
+      </div>`:''}
+    </div>
+    ${selPanel}
+  </div>
   ${!art?`<div class="card"><div class="empty-state"><div class="empty-icon">⇄</div><div class="empty-sub">Select an article to view comparison</div></div></div>`:
-  !aCons.length?`<div class="card"><div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">No active contractors</div></div></div>`:`
-  <div class="card"><div class="card-title">${esc(art.code)} · ${esc(art.name)} — Rate Comparison (PKR/Pc)</div>
-  <div class="tw"><table><thead><tr><th>Group</th><th>Operation</th><th>Unit</th>
-  <th style="color:var(--green)">Approved Rate</th>
-  ${aCons.map(c=>`<th style="color:var(--blue)">${esc(c.name)}</th>`).join('')}
-  </tr></thead><tbody>
-  ${art.groups.map(g=>g.ops.map((op,oi)=>{
-    const cells=aCons.map(c=>{
-      const conMap=rcMap[c.id]||{};
-      const rate=conMap[op.id]!==undefined?conMap[op.id]:null;
-      const apr=+op.approved_rate||0;
-      let sty='color:var(--muted)';
-      if(rate!==null&&apr>0) sty=rate<=apr?'color:var(--green);font-weight:600':'color:var(--red);font-weight:600';
-      return `<td class="mono" style="${sty}">${rate!==null?pkr(rate):'—'}</td>`;
-    }).join('');
-    return`<tr><td style="color:var(--muted);font-size:11.5px">${oi===0?`<span style="font-weight:700;color:var(--accent)">${esc(g.name)}</span>`:''}</td>
-    <td>${esc(op.name)}</td><td><span class="chip">${esc(op.unit)}</span></td>
-    <td class="mono" style="color:var(--green)">${pkr(op.approved_rate||0)}</td>${cells}</tr>`;
-  }).join('')).join('')}
-  </tbody></table></div>
-  <div style="margin-top:10px;font-size:11px;color:var(--muted)">
-    <span style="color:var(--green)">■</span> At/below approved &nbsp;
-    <span style="color:var(--red)">■</span> Above approved &nbsp;
-    <span style="color:var(--muted)">■</span> Not set
-  </div></div>`}`;
+  !allCons.length?`<div class="card"><div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">No active contractors</div></div></div>`:
+  visCons.length===0?`<div class="card"><div class="empty-state"><div class="empty-icon">⇄</div><div class="empty-sub">Tick at least one contractor above to see the comparison table.</div></div></div>`:`
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <div class="card-title" style="margin-bottom:0">${esc(art.code)} · ${esc(art.name)} — Rate Comparison (PKR/Pc)</div>
+      <span class="badge badge-blue">${visCons.length} of ${allCons.length} contractor${allCons.length>1?'s':''} shown</span>
+    </div>
+    <div class="tw"><table><thead><tr>
+      <th>Group</th><th>Operation</th><th>Unit</th>
+      <th style="color:var(--green)">Approved Rate</th>
+      ${visCons.map(c=>`<th style="color:var(--blue)">${esc(c.name)}</th>`).join('')}
+    </tr></thead><tbody>
+    ${art.groups.map(g=>{
+      const opRows=g.ops.map((op,oi)=>{
+        const cells=visCons.map(c=>{
+          const rate=(rcMap[c.id]||{})[op.id]!==undefined?(rcMap[c.id]||{})[op.id]:null;
+          const apr=+op.approved_rate||0;
+          let sty='color:var(--muted)';
+          if(rate!==null&&apr>0) sty=rate<=apr?'color:var(--green);font-weight:600':'color:var(--red);font-weight:600';
+          return`<td class="mono" style="${sty}">${rate!==null?pkr(rate):'—'}</td>`;
+        }).join('');
+        return`<tr>
+          <td style="color:var(--muted);font-size:11.5px">${oi===0?`<span style="font-weight:700;color:var(--accent)">${esc(g.name)}</span>`:''}</td>
+          <td>${esc(op.name)}</td><td><span class="chip">${esc(op.unit)}</span></td>
+          <td class="mono" style="color:var(--green)">${pkr(op.approved_rate||0)}</td>${cells}
+        </tr>`;
+      }).join('');
+      // Group subtotal row
+      const aprSub=g.ops.reduce((s,op)=>s+(+op.approved_rate||0),0);
+      const conSubs=visCons.map(c=>{
+        const rates=g.ops.map(op=>{const r=(rcMap[c.id]||{})[op.id];return r!==undefined?+r:null;});
+        const hasAll=rates.every(r=>r!==null);
+        const total=rates.reduce((s,r)=>s+(r||0),0);
+        const anyOver=g.ops.some((op,i)=>rates[i]!==null&&rates[i]>(+op.approved_rate||0));
+        const sty=hasAll?(anyOver?'color:var(--red)':'color:var(--green)'):'color:var(--muted)';
+        return`<td class="mono" style="font-weight:700;${sty}">${hasAll?pkr(total):'~'+pkr(total)}</td>`;
+      }).join('');
+      return opRows+`<tr style="background:rgba(245,166,35,.04);border-top:1px solid var(--border)">
+        <td colspan="3" style="text-align:right;font-size:11px;font-weight:700;color:var(--muted);padding-right:10px">Group Subtotal:</td>
+        <td class="mono" style="color:var(--accent);font-weight:700">${pkr(aprSub)}</td>${conSubs}
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted)">
+      <span style="color:var(--green)">■</span> At/below approved &nbsp;
+      <span style="color:var(--red)">■</span> Above approved &nbsp;
+      <span style="color:var(--muted)">■</span> Not set &nbsp;&nbsp;
+      <span>~ = partial rates only</span>
+    </div>
+  </div>`}`;
+}
+
+function rcToggleCon(id,checked){
+  if(checked){if(!MD.rcSelCons.includes(id))MD.rcSelCons.push(id);}
+  else{MD.rcSelCons=MD.rcSelCons.filter(x=>x!==id);}
+  render();
+}
+function rcToggleAllCons(all){
+  MD.rcSelCons=all?ST.contractors.filter(c=>c.active).map(c=>c.id):[];
+  render();
 }
 
 function rcGetData(){
   const aArts=ST.articles.filter(a=>a.active);
   const selId=MD.rcArtId||(aArts[0]?aArts[0].id:'');
   const art=ST.articles.find(a=>a.id===selId);
-  const aCons=ST.contractors.filter(c=>c.active);
+  const allCons=ST.contractors.filter(c=>c.active);
+  // Only export the ticked contractors
+  const aCons=MD.rcSelCons&&MD.rcSelCons.length
+    ?allCons.filter(c=>MD.rcSelCons.includes(c.id))
+    :allCons;
   const rcMap=MD.rcMap||{};
   return{art,aCons,rcMap};
 }
