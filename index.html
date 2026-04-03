@@ -908,12 +908,6 @@ function bind(){
       hideLoad();
       MODAL='rate_card';MD={conId:el.dataset.id,rcArt:firstArt?firstArt.id:'',rcRates};render();return;
     }
-    if(a==='rc_art_sel'){
-      showLoad();
-      const rates=await dbLoadRateCards(MD.conId,el.value);
-      hideLoad();
-      MD.rcArt=el.value;MD.rcRates=rates;render();return;
-    }
     if(a==='save_rc'){
       const art=ST.articles.find(x=>x.id===el.dataset.artid);if(!art)return;
       const rates={};
@@ -922,25 +916,7 @@ function bind(){
       const ok=await dbSaveRateCard(el.dataset.conid,el.dataset.artid,rates);
       if(ok){MODAL=null;toast('✓ Rate card saved');}render();return;
     }
-    if(a==='rc_sel_art'){
-      showLoad();
-      const aArts=ST.articles.filter(a=>a.active);
-      const selCons=ST.contractors.filter(c=>c.active);
-      const rcMap={};
-      for(const c of selCons){rcMap[c.id]=await dbLoadRateCards(c.id,el.value);}
-      hideLoad();
-      MD.rcArtId=el.value;MD.rcMap=rcMap;render();return;
-    }
-
     // Cost Sheet
-    if(a==='cs_sel_art'||a==='cs_sel_con'){
-      collectCSF();
-      if(a==='cs_sel_art') CSF.articleId=el.value;
-      if(a==='cs_sel_con') CSF.contractorId=el.value;
-      if(CSF.articleId){await loadCSFGroups();}
-      render();return;
-    }
-    if(a==='cs_qty'){collectCSF();CSF.quantity=+el.value||0;if(CSF.groups)CSF.groups.forEach(g=>g.ops.forEach(o=>{if(!o._mq)o.qty=CSF.quantity;}));render();return;}
     if(a==='save_cs'){
       collectCSF();
       if(!CSF.articleId){toast('⚠ Select an article',true);return;}
@@ -959,6 +935,41 @@ function bind(){
     if(a==='dl_xls_form'){collectCSF();xlsExport(CSF);return;}
     if(a==='dl_pdf_form'){collectCSF();pdfExport(CSF);return;}
     if(a==='open_ops'){EDIT_AID=el.dataset.id;nav('ops_editor');return;}
+  }));
+
+  // Select dropdowns — must use 'change', not 'click'
+  document.querySelectorAll('select[data-action]').forEach(el=>el.addEventListener('change',async e=>{
+    const a=el.dataset.action;
+
+    if(a==='cs_sel_art'||a==='cs_sel_con'){
+      collectCSF();
+      if(a==='cs_sel_art') CSF.articleId=el.value;
+      if(a==='cs_sel_con') CSF.contractorId=el.value;
+      if(CSF.articleId){showLoad();await loadCSFGroups();hideLoad();}
+      render();return;
+    }
+    if(a==='rc_art_sel'){
+      showLoad();
+      const rates=await dbLoadRateCards(MD.conId,el.value);
+      hideLoad();
+      MD.rcArt=el.value;MD.rcRates=rates;render();return;
+    }
+    if(a==='rc_sel_art'){
+      showLoad();
+      const aArts=ST.articles.filter(a=>a.active);
+      const selCons=ST.contractors.filter(c=>c.active);
+      const rcMap={};
+      for(const c of selCons){rcMap[c.id]=await dbLoadRateCards(c.id,el.value);}
+      hideLoad();
+      MD.rcArtId=el.value;MD.rcMap=rcMap;render();return;
+    }
+  }));
+
+  // Order Qty input — needs 'input' event, not 'click'
+  document.querySelectorAll('input[data-action="cs_qty"]').forEach(el=>el.addEventListener('input',()=>{
+    collectCSF();CSF.quantity=+el.value||0;
+    if(CSF.groups)CSF.groups.forEach(g=>g.ops.forEach(o=>{if(!o._mq)o.qty=CSF.quantity;}));
+    render();
   }));
 
   // Live inputs
