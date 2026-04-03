@@ -602,16 +602,32 @@ function rRateComp(){
 // COST SHEETS LIST
 // ═══════════════════════════════════════════════
 function rCSList(){
+  const fi='background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:4px 7px;color:var(--text);font-size:11px;font-family:\'DM Sans\',sans-serif;width:100%;outline:none;transition:border .14s';
   return `<div class="page-header"><div><div class="page-title">Cost <span>Sheets</span></div></div>
   <button class="btn btn-primary" data-nav="newcs">+ New Sheet</button></div>
   ${!ST.costSheets.length?`<div class="card"><div class="empty-state"><div class="empty-icon">◉</div><div class="empty-text">No cost sheets yet</div></div></div>`:`
-  <div class="card"><div class="tw"><table>
-    <thead><tr><th>Sheet#</th><th>Article</th><th>Contractor</th><th>Description</th><th>Buyer</th><th>Qty</th><th>Total CMT</th><th>Per Unit</th><th>Actions</th></tr></thead>
-    <tbody>${ST.costSheets.map(cs=>{
+  <div class="card"><div class="tw"><table id="cs-table">
+    <thead>
+      <tr><th>Sheet#</th><th>Article</th><th>Contractor</th><th>Description</th><th>Buyer</th><th>Qty</th><th>Total CMT</th><th>Per Unit</th><th>Actions</th></tr>
+      <tr id="cs-filter-row" style="background:var(--surface2)">
+        <th style="padding:5px 8px"><input style="${fi}" placeholder="🔍 Sheet#" id="cf_sn" oninput="csFilter()"/></th>
+        <th style="padding:5px 8px"><input style="${fi}" placeholder="🔍 Article" id="cf_art" oninput="csFilter()"/></th>
+        <th style="padding:5px 8px"><input style="${fi}" placeholder="🔍 Contractor" id="cf_con" oninput="csFilter()"/></th>
+        <th style="padding:5px 8px"><input style="${fi}" placeholder="🔍 Description" id="cf_desc" oninput="csFilter()"/></th>
+        <th style="padding:5px 8px"><input style="${fi}" placeholder="🔍 Buyer" id="cf_buyer" oninput="csFilter()"/></th>
+        <th colspan="4" style="padding:5px 8px"><button class="btn btn-ghost btn-xs" onclick="csClearFilters()" style="font-size:11px">✕ Clear</button></th>
+      </tr>
+    </thead>
+    <tbody id="cs-tbody">${ST.costSheets.map(cs=>{
       const art=ST.articles.find(a=>a.id===cs.article_id);
       const con=ST.contractors.find(c=>c.id===cs.contractor_id);
       const tot=calcTot(cs);const qty=+cs.quantity||0;
-      return`<tr>
+      return`<tr
+        data-sn="${esc((cs.sheet_no||'').toLowerCase())}"
+        data-art="${esc((art?art.code+' '+art.name:'').toLowerCase())}"
+        data-con="${esc((con?con.name:'').toLowerCase())}"
+        data-desc="${esc((cs.description||'').toLowerCase())}"
+        data-buyer="${esc((cs.buyer||'').toLowerCase())}">
         <td><span class="chip">${esc(cs.sheet_no||'—')}</span></td>
         <td><b>${esc(art?art.code:'?')}</b><div style="font-size:10.5px;color:var(--muted)">${esc(art?art.name:'')}</div></td>
         <td style="font-size:12px">${esc(con?con.name:'—')}</td>
@@ -628,7 +644,32 @@ function rCSList(){
           <button class="btn btn-danger btn-xs" data-action="del_cs" data-id="${cs.id}">Del</button>
         </div></td>
       </tr>`;}).join('')}
-    </tbody></table></div></div>`}`;
+    </tbody></table></div>
+    <div id="cs-no-results" style="display:none;text-align:center;padding:22px;color:var(--muted);font-size:13px">No matching cost sheets</div>
+    </div>`}`;
+}
+
+function csFilter(){
+  const v=id=>(document.getElementById(id)?.value||'').toLowerCase().trim();
+  const sn=v('cf_sn'),art=v('cf_art'),con=v('cf_con'),desc=v('cf_desc'),buyer=v('cf_buyer');
+  let visible=0;
+  document.querySelectorAll('#cs-tbody tr').forEach(row=>{
+    const match=
+      (!sn||row.dataset.sn.includes(sn))&&
+      (!art||row.dataset.art.includes(art))&&
+      (!con||row.dataset.con.includes(con))&&
+      (!desc||row.dataset.desc.includes(desc))&&
+      (!buyer||row.dataset.buyer.includes(buyer));
+    row.style.display=match?'':'none';
+    if(match)visible++;
+  });
+  const nr=document.getElementById('cs-no-results');
+  if(nr)nr.style.display=visible===0?'block':'none';
+}
+
+function csClearFilters(){
+  ['cf_sn','cf_art','cf_con','cf_desc','cf_buyer'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  csFilter();
 }
 
 // ═══════════════════════════════════════════════
